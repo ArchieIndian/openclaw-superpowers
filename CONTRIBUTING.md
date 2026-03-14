@@ -1,13 +1,23 @@
 # Contributing
 
-The easiest way to create a new skill is to use the `create-skill` superpower — it walks you through the full process, from naming to validation.
+We'd love your skills! Here's how to contribute.
 
-If you prefer to do it manually:
+## Quick Start
 
-1. Create a directory under `skills/core/` (general methodology) or `skills/openclaw-native/` (requires persistence/memory)
-2. Add a `SKILL.md` with `name` and `description` frontmatter
-3. Follow the template and conventions in `skills/core/create-skill/SKILL.md`
-4. Run the validation checklist before submitting
+1. **Propose your idea** — [Open a Skill Proposal issue](../../issues/new?template=skill-proposal.yml) to get feedback
+2. **Create the skill** — Use the `create-skill` superpower or copy the [template](skills/core/create-skill/TEMPLATE.md)
+3. **Validate locally** — Run `./scripts/validate-skills.sh` to catch issues
+4. **Submit a PR** — CI validates automatically on any PR that touches `skills/`
+
+## Where to Put Your Skill
+
+| Directory | For | Examples |
+|---|---|---|
+| `skills/core/` | General agent methodology — works in any runtime | brainstorming, debugging, TDD |
+| `skills/openclaw-native/` | Requires persistence, memory, or long sessions | task-handoff, self-recovery |
+| `skills/community/` | Community contributions — any category | your skill goes here! |
+
+New contributors should use `skills/community/`. Proven community skills may be promoted to core or openclaw-native over time.
 
 ## Conventions
 
@@ -17,8 +27,19 @@ If you prefer to do it manually:
 - Frontmatter `name` must match the directory name
 - Include clear "When to Use" triggers so the agent knows when to invoke it
 
+## Validation
+
+Run the validation script before submitting:
+
+```bash
+./scripts/validate-skills.sh
+```
+
+It checks: frontmatter format, naming conventions, file structure, and line count.
+
 ## Pull Requests
 
 - One skill per PR
 - Include a short description of why this skill is needed
 - If it overlaps with an existing skill, explain the difference
+- Link to the Skill Proposal issue if one exists

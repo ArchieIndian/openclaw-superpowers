@@ -60,6 +60,21 @@ That's it. Your agent now has superpowers.
 | `context-window-management` | Prevents context overflow on long-running OpenClaw sessions |
 | `daily-review` | End-of-day structured summary and next-session prep |
 
+### Community
+
+Community-contributed skills live in `skills/community/`. Want to add one? See [CONTRIBUTING.md](CONTRIBUTING.md) or use the `create-skill` superpower.
+
+## Contributing
+
+We welcome community skills! The process:
+
+1. **Propose** — [Open a Skill Proposal issue](../../issues/new?template=skill-proposal.yml) to get feedback before writing
+2. **Create** — Use the `create-skill` superpower or follow the [template](skills/core/create-skill/TEMPLATE.md)
+3. **Validate** — Run `./scripts/validate-skills.sh` locally to check your skill
+4. **Submit** — Open a PR (CI will validate automatically)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full details.
+
 ## Credits
 
 This project stands on the shoulders of two incredible communities:
