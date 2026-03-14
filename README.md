@@ -47,6 +47,7 @@ That's it. Your agent now has superpowers.
 | `verification-before-completion` | Ensures tasks are actually done, not just attempted |
 | `test-driven-development` | Red-green-refactor discipline |
 | `subagent-driven-development` | Parallel subagent execution for complex tasks |
+| `create-skill` | Scaffolds and validates new skills — the easiest way to contribute |
 
 ### OpenClaw-Native (New Skills, Not in Superpowers)
 
