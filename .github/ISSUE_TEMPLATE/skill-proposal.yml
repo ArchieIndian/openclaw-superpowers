@@ -1,0 +1,71 @@
+name: Skill Proposal
+description: Propose a new skill for openclaw-superpowers
+title: "[Skill Proposal] "
+labels: ["skill-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a new skill! Please fill out the details below so we can evaluate the idea before you invest time writing it.
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill name
+      description: Kebab-case, 2-4 words (e.g., `retry-with-backoff`)
+      placeholder: my-new-skill
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: What does this skill do?
+      description: One sentence describing the skill's purpose.
+      placeholder: "Helps the agent do X when Y happens."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Where should this skill live?
+      options:
+        - "core — general agent methodology, works in any runtime"
+        - "openclaw-native — requires persistence, memory, or long sessions"
+        - "community — contributed by the community"
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger
+    attributes:
+      label: When should the agent use this?
+      description: List the specific triggers or situations where this skill applies.
+      placeholder: |
+        - When the agent encounters X
+        - After completing Y
+    validations:
+      required: true
+
+  - type: textarea
+    id: overlap
+    attributes:
+      label: Overlap check
+      description: Does any existing skill already cover this? If so, why is a new skill needed instead of extending the existing one?
+      placeholder: "No existing skill covers this because..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: process
+    attributes:
+      label: Rough process (optional)
+      description: If you have a draft of the steps, share them here. This helps reviewers evaluate the approach.
+      placeholder: |
+        1. First, do X
+        2. Then, do Y
+        3. Finally, verify Z
+    validations:
+      required: false
