@@ -1,27 +1,26 @@
 # openclaw-superpowers
 
-Give your OpenClaw agents superpowers.
+Give your OpenClaw agent superpowers — and let it teach itself new ones.
 
-A plug-and-play skill library built specifically for OpenClaw, inspired by [obra/superpowers](https://github.com/obra/superpowers).
+A plug-and-play skill library for [OpenClaw](https://github.com/openclaw/openclaw), inspired by [obra/superpowers](https://github.com/obra/superpowers).
 
-## What is this?
+---
 
-[OpenClaw](https://github.com/openclaw/openclaw) is the fastest-growing personal AI agent runtime — 122K stars and counting. It runs 24/7 on any OS and is the backbone for thousands of personal and professional agent workflows.
+## The idea that makes this different
 
-[obra/superpowers](https://github.com/obra/superpowers) introduced a brilliant idea: composable skill files — markdown documents that tell your agent exactly how to behave for specific tasks. No more repeating yourself. No more agents that fail the same way twice.
+Most AI tools require a developer to add new behaviors. You file an issue, wait for a release, update your config.
 
-This repo bridges both. It gives OpenClaw users a ready-made, tested, always-growing library of skills — tuned specifically to how OpenClaw's runtime works.
+**openclaw-superpowers makes your agent self-modifying.**
 
-## Why OpenClaw-specific?
+> *"Every time I ask for a code review, always check for security issues first."*
 
-Superpowers was built primarily for Claude Code, Cursor, and Codex. OpenClaw has a different runtime model:
+Your agent invokes `create-skill`, writes a new `SKILL.md`, and that behavior is live — immediately, permanently, no restart needed.
 
-- It runs **persistently (24/7)**, not just per-session
-- It handles **long-running tasks** across hours, not minutes
-- It has its own tool naming conventions
-- It benefits from skills around **task handoff, memory persistence, and agent recovery** that session-based tools don't need
+The agent can encode your preferences as durable skills during normal conversation. You describe what you want. It teaches itself.
 
-This repo handles those differences so you don't have to.
+This works because OpenClaw runs 24/7 with a persistent extensions directory. New skill files are auto-discovered the moment they're written.
+
+---
 
 ## Quickstart
 
@@ -31,53 +30,65 @@ cd ~/.openclaw/extensions/superpowers && ./install.sh
 openclaw gateway restart
 ```
 
-That's it. Your agent now has superpowers.
+Your agent now has superpowers.
+
+---
 
 ## Skills Included
 
-### Core (Ported & Adapted from obra/superpowers)
+### Core (9 skills — adapted from obra/superpowers)
 
 | Skill | Purpose |
 |---|---|
 | `using-superpowers` | Bootstrap — teaches the agent how to find and invoke skills |
 | `brainstorming` | Structured ideation before any implementation |
-| `writing-plans` | Creates clear, reviewable implementation plans |
-| `executing-plans` | Executes plans task-by-task with verification |
+| `writing-plans` | Clear, reviewable implementation plans |
+| `executing-plans` | Executes plans step-by-step with verification |
 | `systematic-debugging` | 4-phase root cause process before any fix |
-| `verification-before-completion` | Ensures tasks are actually done, not just attempted |
+| `verification-before-completion` | Ensures tasks are done, not just attempted |
 | `test-driven-development` | Red-green-refactor discipline |
 | `subagent-driven-development` | Parallel subagent execution for complex tasks |
-| `create-skill` | Scaffolds and validates new skills — the easiest way to contribute |
+| `create-skill` | **Writes new skills during conversation** |
 
-### OpenClaw-Native (New Skills, Not in Superpowers)
+### OpenClaw-Native (6 skills — new, not in superpowers)
 
 | Skill | Purpose |
 |---|---|
-| `long-running-task-management` | Breaks multi-hour tasks into checkpointed stages with resume capability |
-| `persistent-memory-hygiene` | Keeps OpenClaw's memory store clean, structured, and useful over time |
-| `task-handoff` | Gracefully hands off incomplete tasks across agent restarts |
-| `agent-self-recovery` | Detects when the agent is stuck in a loop and escapes systematically |
-| `context-window-management` | Prevents context overflow on long-running OpenClaw sessions |
-| `daily-review` | End-of-day structured summary and next-session prep |
+| `long-running-task-management` | Checkpointed stages for multi-hour tasks |
+| `persistent-memory-hygiene` | Keeps memory clean and useful over time |
+| `task-handoff` | Graceful handoff across agent restarts |
+| `agent-self-recovery` | Escapes loops and stuck states |
+| `context-window-management` | Prevents context overflow on long sessions |
+| `daily-review` | End-of-day summary and next-session prep |
 
 ### Community
 
-Community-contributed skills live in `skills/community/`. Want to add one? See [CONTRIBUTING.md](CONTRIBUTING.md) or use the `create-skill` superpower.
+Skills written by agents and contributors. Lives in `skills/community/`.
+
+---
+
+## Why OpenClaw-specific?
+
+obra/superpowers was built for session-based tools (Claude Code, Cursor, Codex). OpenClaw is different:
+
+- Runs **24/7**, not just per-session
+- Handles tasks that take **hours, not minutes**
+- Needs skills around **handoff, memory persistence, and self-recovery** that session tools don't require
+
+The OpenClaw-native skills in this repo exist because of that difference.
+
+---
 
 ## Contributing
 
-We welcome community skills! The process:
+1. Open a Skill Proposal issue — or just ask your agent to write one using `create-skill`
+2. Run `./scripts/validate-skills.sh`
+3. Submit a PR — CI validates automatically
+4. Community skills may be promoted to core over time
 
-1. **Propose** — [Open a Skill Proposal issue](../../issues/new?template=skill-proposal.yml) to get feedback before writing
-2. **Create** — Use the `create-skill` superpower or follow the [template](skills/core/create-skill/TEMPLATE.md)
-3. **Validate** — Run `./scripts/validate-skills.sh` locally to check your skill
-4. **Submit** — Open a PR (CI will validate automatically)
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for full details.
+---
 
 ## Credits
 
-This project stands on the shoulders of two incredible communities:
-
-- **[openclaw/openclaw](https://github.com/openclaw/openclaw)** — the personal AI agent runtime that makes all of this possible.
-- **[obra/superpowers](https://github.com/obra/superpowers)** — Jesse Vincent's brilliant skills framework. The core skills in this repo are adapted from Superpowers (MIT license).
+- **[openclaw/openclaw](https://github.com/openclaw/openclaw)** — the personal AI runtime that makes this possible
+- **[obra/superpowers](https://github.com/obra/superpowers)** — Jesse Vincent's skills framework; core skills adapted here under MIT license
