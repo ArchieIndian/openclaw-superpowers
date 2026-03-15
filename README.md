@@ -64,7 +64,7 @@ Methodology skills that work in any runtime. Adapted from [obra/superpowers](htt
 | `skill-conflict-detector` | Detects name shadowing and description-overlap conflicts between installed skills | `detect.py` |
 | `skill-portability-checker` | Validates OS/binary dependencies in companion scripts; catches non-portable calls | `check.py` |
 
-### OpenClaw-Native (24 skills)
+### OpenClaw-Native (28 skills)
 
 Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. Not useful in session-based tools.
 
@@ -94,6 +94,10 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `skill-compatibility-checker` | Checks installed skills against the current OpenClaw version for feature compatibility | — | ✓ | `check.py` |
 | `heartbeat-governor` | Enforces per-skill execution budgets for cron skills; auto-pauses runaway skills | every hour | ✓ | `governor.py` |
 | `community-skill-radar` | Scans Reddit for OpenClaw pain points and feature requests; writes prioritized PROPOSALS.md | every 3 days | ✓ | `radar.py` |
+| `memory-graph-builder` | Parses MEMORY.md into a knowledge graph; detects duplicates, contradictions, and stale entries; generates compressed digest | daily 10pm | ✓ | `graph.py` |
+| `config-encryption-auditor` | Scans config directories for plaintext API keys, tokens, and world-readable permissions | Sundays 9am | ✓ | `audit.py` |
+| `tool-description-optimizer` | Scores skill descriptions for trigger quality — clarity, specificity, keyword density — and suggests rewrites | — | ✓ | `optimize.py` |
+| `mcp-health-checker` | Monitors MCP server connections for health, latency, and availability; detects stale connections | every 6h | ✓ | `check.py` |
 
 ### Community (1 skill)
 
@@ -113,7 +117,7 @@ Stateful skills commit a `STATE_SCHEMA.yaml` defining the shape of their runtime
 
 Skills marked with a script in the table above ship a small executable alongside their `SKILL.md`:
 
-- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
+- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
 - Each script supports `--help` and prints a human-readable summary. JSON output available where useful (`--format json`). Dry-run mode available on scripts that make changes.
 - See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of the skill's cron behaviour.
@@ -122,7 +126,7 @@ Skills marked with a script in the table above ship a small executable alongside
 
 ## Security skills at a glance
 
-Five skills address the documented top security risks for OpenClaw agents:
+Six skills address the documented top security risks for OpenClaw agents:
 
 | Threat | Skill | How |
 |---|---|---|
@@ -131,6 +135,7 @@ Five skills address the documented top security risks for OpenClaw agents:
 | Agent takes destructive action without confirmation | `dangerous-action-guard` | Pre-execution gate with 5-min expiry window and full audit trail |
 | Post-install skill tampering or credential injection | `installed-skill-auditor` | Weekly content-hash drift detection; INJECTION / CREDENTIAL / EXFILTRATION checks |
 | Silent skill loading failures hiding broken skills | `skill-doctor` | 6 diagnostic checks per skill; surfaces every load-time failure before it disappears |
+| Plaintext API keys and tokens in config files | `config-encryption-auditor` | Scans for 8 API key patterns + 3 token patterns; auto-fixes permissions; suggests env var migration |
 
 ---
 
