@@ -1,0 +1,43 @@
+# Example runtime state for memory-graph-builder
+last_build_at: "2026-03-15T22:00:12.000000"
+node_count: 48
+edge_count: 15
+duplicate_count: 4
+contradiction_count: 1
+stale_count: 3
+digest_tokens: 420
+build_history:
+  - built_at: "2026-03-15T22:00:12.000000"
+    node_count: 48
+    duplicates_found: 4
+    contradictions_found: 1
+    stale_found: 3
+    digest_tokens: 420
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Nightly cron runs:  python3 graph.py --build
+#
+#   Memory Graph Builder — 2026-03-15 22:00
+#   ────────────────────────────────────────────────────────────────
+#     Memory lines   : 52
+#     Nodes          : 48
+#     Edges          : 15
+#     Duplicates     : 4
+#     Contradictions : 1
+#     Stale          : 3
+#     Digest tokens  : ~420
+#
+#     Digest written to: ~/.openclaw/workspace/memory-digest.md
+#
+# python3 graph.py --duplicates
+#   DUP:  "User prefers dark mode for all applications"
+#   ORIG: "User likes dark theme everywhere"
+#
+# python3 graph.py --contradictions
+#   A: "User uses Python 3.8 for backend services"
+#   B: "User recently upgraded to Python 3.12"
+#   → Resolve by editing MEMORY.md
+#
+# python3 graph.py --prune --dry-run
+#   Dry run — would prune 7 entries:
+#     [duplicate] "User prefers dark mode for all applications"
+#     [stale] "Working on migration to React 17"
