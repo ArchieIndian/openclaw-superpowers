@@ -1,0 +1,46 @@
+# Example runtime state for channel-context-bridge
+auto_inject_hours: 24
+latest_card:
+  topic: "Refactoring the payments service authentication layer"
+  decisions:
+    - "Use JWT instead of session tokens"
+    - "Middleware goes in /lib/auth, not controllers"
+    - "Decided NOT to use refresh tokens for MVP"
+  open_questions:
+    - "Does the mobile app support Authorization header?"
+    - "Should token expiry be 1h or 24h?"
+  next_actions:
+    - "Write unit tests for TokenValidator.verify()"
+    - "Update Swagger docs for POST /auth/login"
+  critical_context: "The payments-service uses a legacy DB schema — user IDs are UUID v1 not v4. Don't change this."
+  source_channel: "telegram-personal"
+  written_at: "2026-03-15T17:42:00.000000"
+card_history:
+  - topic: "Refactoring the payments service authentication layer"
+    decisions: ["Use JWT", "Middleware in /lib/auth"]
+    next_actions: ["Write tests for TokenValidator"]
+    source_channel: "telegram-personal"
+    written_at: "2026-03-15T17:42:00.000000"
+  - topic: "Setting up CI pipeline for payments-service"
+    decisions: ["Use GitHub Actions", "Run on push to main and PRs"]
+    next_actions: ["Add caching for node_modules"]
+    source_channel: "slack-work"
+    written_at: "2026-03-14T18:10:00.000000"
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# End of Telegram session (evening):
+#   python3 bridge.py --write \
+#     --topic "Refactoring payments auth" \
+#     --decisions "Use JWT; Middleware in /lib/auth" \
+#     --next "Write tests for TokenValidator; Update Swagger" \
+#     --context "UUID v1 not v4 — don't change" \
+#     --channel telegram-personal
+#   → "✓ Resumé card written (telegram-personal): Refactoring payments auth"
+#
+# Next morning, new Slack session:
+#   python3 bridge.py --check
+#   → "recent: Picking up from telegram-personal at 2026-03-15T17:42:
+#      Refactoring the payments service authentication layer.
+#      Next: Write unit tests for TokenValidator.verify()."
+#
+# Agent injects this as session primer automatically.
+# User just continues: "OK let's write those tests."
