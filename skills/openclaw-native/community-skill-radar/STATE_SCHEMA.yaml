@@ -1,0 +1,46 @@
+version: "1.0"
+description: Community radar scan results, proposal ledger, and actioned tracking.
+fields:
+  last_scan_at:
+    type: datetime
+  subreddits:
+    type: list
+    description: Subreddits included in the last scan
+    items:
+      type: string
+  proposals:
+    type: list
+    description: All proposals from the most recent scan (newest first)
+    items:
+      id:           { type: string, description: "slug derived from title" }
+      title:        { type: string }
+      pain_point:   { type: string }
+      potential_skill: { type: string }
+      score:        { type: float }
+      sources:
+        type: list
+        items:
+          subreddit:  { type: string }
+          post_title: { type: string }
+          url:        { type: string }
+          upvotes:    { type: integer }
+          comments:   { type: integer }
+          fetched_at: { type: datetime }
+      first_seen_at: { type: datetime }
+      times_seen:    { type: integer }
+  actioned:
+    type: list
+    description: Proposal IDs that have been acted on (built, filed as issues)
+    items:
+      id:          { type: string }
+      actioned_at: { type: datetime }
+      action:      { type: string, description: "built, issue-filed, rejected" }
+  scan_history:
+    type: list
+    description: Rolling log of past scans (last 20)
+    items:
+      scanned_at:       { type: datetime }
+      subreddits:       { type: integer }
+      posts_fetched:    { type: integer }
+      candidates_found: { type: integer }
+      proposals_written: { type: integer }
