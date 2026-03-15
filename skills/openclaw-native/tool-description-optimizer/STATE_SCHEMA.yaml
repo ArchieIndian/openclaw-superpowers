@@ -1,0 +1,27 @@
+version: "1.0"
+description: Tool description quality scores, rewrite suggestions, and scan history.
+fields:
+  last_scan_at:
+    type: datetime
+  skill_scores:
+    type: list
+    description: Per-skill quality scores from the most recent scan
+    items:
+      skill_name:   { type: string }
+      description:  { type: string }
+      word_count:   { type: integer }
+      clarity:      { type: float, description: "0-10 clarity score" }
+      specificity:  { type: float, description: "0-10 specificity score" }
+      keyword_density: { type: float, description: "0-10 keyword density score" }
+      uniqueness:   { type: float, description: "0-10 uniqueness vs other skills" }
+      length_score: { type: float, description: "0-10 length optimality score" }
+      overall:      { type: float, description: "Weighted composite score" }
+      grade:        { type: string, description: "A/B/C/D/F" }
+  scan_history:
+    type: list
+    description: Rolling log of past scans (last 20)
+    items:
+      scanned_at:      { type: datetime }
+      skills_scanned:  { type: integer }
+      avg_score:       { type: float }
+      grade_distribution: { type: object, description: "Count per grade: A, B, C, D, F" }
