@@ -1,0 +1,54 @@
+# Example runtime state for spend-circuit-breaker
+# Lives at: ~/.openclaw/skill-state/spend-circuit-breaker/state.yaml
+
+monthly_budget_usd: 50.0
+spend_this_month_usd: 38.42
+alert_thresholds: [0.5, 0.75]
+circuit_open: false
+current_month: "2026-03"
+last_checked_at: "2026-03-15T08:00:14.339000"
+paused_crons: []
+spend_history:
+  - date: "2026-03-13"
+    usd: 4.21
+    sessions: 3
+  - date: "2026-03-14"
+    usd: 6.18
+    sessions: 5
+  - date: "2026-03-15"
+    usd: 1.03
+    sessions: 2
+custom_models: []
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# Setup (once):
+#   python3 check.py --set-budget 50
+#   python3 check.py --set-alert 0.5 0.75
+#
+# Every 4 hours (cron: "0 */4 * * *"), the agent runs check.py.
+# It scans ~/.openclaw/sessions/*.jsonl for new token usage records,
+# estimates cost using the model price table, and updates state.
+#
+# At 50% ($25.00):
+#   ⚠  Spend alert: $25.31 is 50% of your $50.00 monthly budget.
+#
+# At 75% ($37.50):
+#   ⚠  Spend alert: $37.82 is 75% of your $50.00 monthly budget.
+#
+# At 100% ($50.00) — circuit opens:
+#   🔴 CIRCUIT OPEN: $50.12 has reached budget of $50.00.
+#      Non-essential cron skills will be paused.
+#      Run `python3 check.py --reset-circuit` after billing cycle resets.
+#
+# After billing cycle reset:
+#   python3 check.py --reset-circuit
+#   → "Circuit closed. Cron schedules will be restored on next install."
+#
+# Status at any time:
+#   python3 check.py --status
+#   🟠 Spend Circuit Breaker
+#      Month:   2026-03
+#      Spent:   $38.42 / $50.00  (76.8%)
+#      Circuit: closed
+#      Checked: 2026-03-15T08:00:14
