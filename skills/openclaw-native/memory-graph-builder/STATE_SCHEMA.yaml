@@ -1,0 +1,54 @@
+version: "1.0"
+description: Knowledge graph built from MEMORY.md — nodes, edges, digest, and audit metrics.
+fields:
+  last_build_at:
+    type: datetime
+  node_count:
+    type: integer
+    default: 0
+  edge_count:
+    type: integer
+    default: 0
+  duplicate_count:
+    type: integer
+    default: 0
+  contradiction_count:
+    type: integer
+    default: 0
+  stale_count:
+    type: integer
+    default: 0
+  digest_tokens:
+    type: integer
+    default: 0
+  nodes:
+    type: list
+    description: All memory nodes in the graph
+    items:
+      id:              { type: string }
+      text:            { type: string }
+      category:        { type: enum, values: [preference, fact, project, person, tool, config, other] }
+      entities:        { type: list, items: { type: string } }
+      added_at:        { type: string }
+      last_referenced: { type: string }
+      confidence:      { type: float }
+      is_duplicate_of: { type: string }
+      is_stale:        { type: boolean }
+  edges:
+    type: list
+    description: Relationships between memory nodes
+    items:
+      from:     { type: string }
+      to:       { type: string }
+      relation: { type: enum, values: [related_to, contradicts, supersedes, depends_on, duplicate_of] }
+      weight:   { type: float }
+  build_history:
+    type: list
+    description: Rolling log of graph builds (last 20)
+    items:
+      built_at:           { type: datetime }
+      node_count:         { type: integer }
+      duplicates_found:   { type: integer }
+      contradictions_found: { type: integer }
+      stale_found:        { type: integer }
+      digest_tokens:      { type: integer }
