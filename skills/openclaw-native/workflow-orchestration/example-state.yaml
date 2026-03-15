@@ -1,0 +1,65 @@
+# Example runtime state for workflow-orchestration
+# Lives at: ~/.openclaw/skill-state/workflow-orchestration/state.yaml
+# Managed by: skills/openclaw-native/workflow-orchestration/run.py
+
+workflow_name: ship-feature
+status: in_progress
+current_step: 3
+total_steps: 4
+started_at: "2026-03-15T10:15:00.000000"
+last_updated: "2026-03-15T11:42:17.882031"
+blocked_reason: ""
+steps:
+  - index: 1
+    skill: daily-review
+    instruction: "Review today's priorities and confirm feature is still top priority"
+    on_failure: ""
+    status: complete
+
+  - index: 2
+    skill: long-running-task-management
+    instruction: "Create task 'ship-auth-feature' and set checkpoint at PR creation"
+    on_failure: ""
+    status: complete
+
+  - index: 3
+    skill: agent-self-recovery
+    instruction: "If CI fails, diagnose and recover before moving to next step"
+    on_failure: agent-self-recovery
+    status: pending   # ← currently executing
+
+  - index: 4
+    skill: task-handoff
+    instruction: "Write handoff doc summarising what shipped and what remains"
+    on_failure: ""
+    status: pending
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# The user defined this workflow inline:
+#
+#   workflow: ship-feature
+#   steps:
+#     1. daily-review: Review today's priorities
+#     2. long-running-task-management: Create task 'ship-auth-feature'
+#     [on_failure: agent-self-recovery]
+#     3. agent-self-recovery: Diagnose and recover if CI fails
+#     4. task-handoff: Write handoff doc
+#
+# The agent started with:
+#   python3 run.py --start ship-feature steps.yaml
+#
+# After each step completes, the agent calls:
+#   python3 run.py --step-done
+#   → "Step 2 done. Next: [3] agent-self-recovery: Diagnose and recover if CI fails"
+#
+# If a step fails:
+#   python3 run.py --step-failed "CI pipeline timed out"
+#   → "Step 3 failed. on_failure skill: 'agent-self-recovery' — invoke it, then call --step-done."
+#
+# At any time:
+#   python3 run.py --status
+#   → Prints current step, step list with ✓/○ markers, blocked reason if any
+#
+# If the session ends mid-workflow, the next session reads state and resumes
+# from current_step: 3 automatically.
