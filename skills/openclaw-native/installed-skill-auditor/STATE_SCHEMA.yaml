@@ -1,0 +1,28 @@
+version: "1.0"
+description: Content baselines, weekly findings, and audit history for installed skill audits.
+fields:
+  last_audit_at:
+    type: datetime
+  baselines:
+    type: object
+    description: Map of skill_name -> {file_path -> sha256_hex, recorded_at}
+  findings:
+    type: list
+    description: Active findings awaiting resolution
+    items:
+      skill_name:  { type: string }
+      check:       { type: enum, values: [INJECTION, CREDENTIAL, EXFILTRATION, DRIFT, ORPHAN] }
+      severity:    { type: enum, values: [CRITICAL, HIGH, MEDIUM] }
+      file_path:   { type: string }
+      detail:      { type: string }
+      detected_at: { type: datetime }
+      resolved:    { type: boolean }
+  audit_history:
+    type: list
+    description: Rolling summary of weekly audits (last 12)
+    items:
+      audited_at:      { type: datetime }
+      skills_audited:  { type: integer }
+      critical_count:  { type: integer }
+      high_count:      { type: integer }
+      medium_count:    { type: integer }

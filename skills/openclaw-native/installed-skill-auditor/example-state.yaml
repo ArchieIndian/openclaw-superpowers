@@ -1,0 +1,56 @@
+# Example runtime state for installed-skill-auditor
+last_audit_at: "2026-03-16T09:00:14.227000"
+baselines:
+  obsidian-sync:
+    recorded_at: "2026-03-10T08:00:00.000000"
+    hashes:
+      SKILL.md: "a3f2c1e8d4b5f901..."
+      sync.py: "7b8e2d3a1f0c4e59..."
+      STATE_SCHEMA.yaml: "c9d0e1f2a3b4c5d6..."
+  my-custom-skill:
+    recorded_at: "2026-03-10T08:00:00.000000"
+    hashes:
+      SKILL.md: "1a2b3c4d5e6f7890..."
+      run.py: "9f8e7d6c5b4a3210..."
+findings:
+  - skill_name: my-custom-skill
+    check: CREDENTIAL
+    severity: HIGH
+    file_path: "skills/community/my-custom-skill/run.py"
+    detail: "Credential pattern matched: (?:secret|token|password)"
+    detected_at: "2026-03-16T09:00:14.000000"
+    resolved: false
+  - skill_name: obsidian-sync
+    check: DRIFT
+    severity: MEDIUM
+    file_path: "skills/community/obsidian-sync/sync.py"
+    detail: "Content changed since baseline (sync.py)"
+    detected_at: "2026-03-16T09:00:14.000000"
+    resolved: false
+audit_history:
+  - audited_at: "2026-03-16T09:00:14.000000"
+    skills_audited: 32
+    critical_count: 0
+    high_count: 1
+    medium_count: 1
+  - audited_at: "2026-03-09T09:00:00.000000"
+    skills_audited: 31
+    critical_count: 0
+    high_count: 0
+    medium_count: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Weekly cron (Monday 09:00) runs:
+#   python3 audit.py --scan
+#
+#   Installed Skill Audit — 2026-03-16
+#   ────────────────────────────────────────────────────────────────
+#   32 skills audited | 0 CRITICAL | 1 HIGH | 1 MEDIUM
+#
+#   HIGH     my-custom-skill — CREDENTIAL
+#            Credential pattern matched in run.py
+#   MEDIUM   obsidian-sync — DRIFT
+#            Content changed since baseline (sync.py)
+#
+# Fix CREDENTIAL:  Inspect run.py line 14, rotate the exposed token.
+# Accept DRIFT:    python3 audit.py --diff obsidian-sync
+#                  (review changes, then) python3 audit.py --resolve obsidian-sync
