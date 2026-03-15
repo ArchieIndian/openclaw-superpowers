@@ -1,0 +1,84 @@
+# Example runtime state for community-skill-radar
+last_scan_at: "2026-03-16T09:00:22.441000"
+subreddits:
+  - openclaw
+  - LocalLLaMA
+  - ClaudeAI
+  - MachineLearning
+  - AIAgents
+proposals:
+  - id: skill-auto-update-mechanism
+    title: "Anyone else manually pulling skill updates every time?"
+    pain_point: "No way to update installed skills without manual git pull"
+    potential_skill: skill-auto-updater
+    category: integration
+    score: 12.4
+    sources:
+      - subreddit: openclaw
+        post_title: "Anyone else manually pulling skill updates every time?"
+        url: "https://reddit.com/r/openclaw/comments/abc123/..."
+        upvotes: 47
+        comments: 23
+        score: 8.2
+        fetched_at: "2026-03-16T09:00:20.000000"
+      - subreddit: LocalLLaMA
+        post_title: "OpenClaw skills need an update mechanism"
+        url: "https://reddit.com/r/LocalLLaMA/comments/def456/..."
+        upvotes: 18
+        comments: 9
+        score: 4.2
+        fetched_at: "2026-03-16T09:00:21.000000"
+    first_seen_at: "2026-03-13T09:00:00.000000"
+    times_seen: 3
+  - id: context-window-usage-dashboard
+    title: "My openclaw agent keeps losing context mid-task"
+    pain_point: "No visibility into how much context each skill consumes"
+    potential_skill: context-usage-dashboard
+    category: context
+    score: 9.1
+    sources:
+      - subreddit: LocalLLaMA
+        post_title: "My openclaw agent keeps losing context mid-task"
+        url: "https://reddit.com/r/LocalLLaMA/comments/ghi789/..."
+        upvotes: 31
+        comments: 18
+        score: 9.1
+        fetched_at: "2026-03-16T09:00:22.000000"
+    first_seen_at: "2026-03-16T09:00:22.000000"
+    times_seen: 1
+actioned:
+  - id: skill-load-failure-detection
+    actioned_at: "2026-03-15T10:00:00.000000"
+    action: built
+scan_history:
+  - scanned_at: "2026-03-16T09:00:22.000000"
+    subreddits: 5
+    posts_fetched: 142
+    candidates_found: 8
+    proposals_written: 8
+  - scanned_at: "2026-03-13T09:00:00.000000"
+    subreddits: 5
+    posts_fetched: 118
+    candidates_found: 5
+    proposals_written: 5
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Every 3 days cron runs:  python3 radar.py --scan
+#
+#   Community Skill Radar — scanning 5 subreddits (last 3 days)
+#   ──────────────────────────────────────────────────────────────
+#     Fetching r/openclaw... 28 posts
+#     Fetching r/LocalLLaMA... 42 posts
+#     Fetching r/ClaudeAI... 35 posts
+#     Fetching r/MachineLearning... 22 posts
+#     Fetching r/AIAgents... 15 posts
+#
+#     Posts fetched   : 142
+#     Candidates found: 8
+#     High signal     : 2
+#     Medium signal   : 4
+#     Low signal      : 2
+#
+#     Written to: ~/.openclaw/extensions/superpowers/PROPOSALS.md
+#
+# python3 radar.py --mark-actioned skill-auto-update-mechanism --action built
+#   ✓ Marked 'skill-auto-update-mechanism' as built. Won't be re-proposed.

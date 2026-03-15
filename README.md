@@ -64,7 +64,7 @@ Methodology skills that work in any runtime. Adapted from [obra/superpowers](htt
 | `skill-conflict-detector` | Detects name shadowing and description-overlap conflicts between installed skills | `detect.py` |
 | `skill-portability-checker` | Validates OS/binary dependencies in companion scripts; catches non-portable calls | `check.py` |
 
-### OpenClaw-Native (23 skills)
+### OpenClaw-Native (24 skills)
 
 Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. Not useful in session-based tools.
 
@@ -93,6 +93,7 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `skill-loadout-manager` | Named skill profiles to manage active skill sets and prevent system prompt bloat | — | ✓ | `loadout.py` |
 | `skill-compatibility-checker` | Checks installed skills against the current OpenClaw version for feature compatibility | — | ✓ | `check.py` |
 | `heartbeat-governor` | Enforces per-skill execution budgets for cron skills; auto-pauses runaway skills | every hour | ✓ | `governor.py` |
+| `community-skill-radar` | Scans Reddit for OpenClaw pain points and feature requests; writes prioritized PROPOSALS.md | every 3 days | ✓ | `radar.py` |
 
 ### Community (1 skill)
 
@@ -112,7 +113,7 @@ Stateful skills commit a `STATE_SCHEMA.yaml` defining the shape of their runtime
 
 Skills marked with a script in the table above ship a small executable alongside their `SKILL.md`:
 
-- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
+- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
 - Each script supports `--help` and prints a human-readable summary. JSON output available where useful (`--format json`). Dry-run mode available on scripts that make changes.
 - See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of the skill's cron behaviour.
@@ -142,7 +143,7 @@ obra/superpowers was built for session-based tools (Claude Code, Cursor, Codex).
 - Has **native cron scheduling** — skills wake up automatically on a schedule
 - Needs skills around **handoff, memory persistence, and self-recovery** that session tools don't require
 
-The OpenClaw-native skills in this repo exist because of that difference.
+The OpenClaw-native skills in this repo exist because of that difference. And with `community-skill-radar`, the library discovers what to build next by scanning Reddit communities automatically.
 
 ---
 
