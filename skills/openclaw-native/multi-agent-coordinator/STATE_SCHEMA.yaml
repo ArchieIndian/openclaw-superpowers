@@ -1,0 +1,49 @@
+version: "1.0"
+description: >
+  Agent registry and coordination state for a multi-agent fleet.
+  The orchestrator reads/writes this; sub-agents write heartbeats.
+fields:
+  agents:
+    type: list
+    description: Registry of all managed sub-agents
+    items:
+      agent_id:      { type: string }
+      role:          { type: string }
+      channel:       { type: string }
+      status:        { type: enum, values: [active, idle, timed_out, completed, failed] }
+      current_task:  { type: string }
+      last_seen:     { type: datetime }
+      registered_at: { type: datetime }
+      output_keys:   { type: list, items: { type: string } }
+  timeout_minutes:
+    type: integer
+    default: 30
+    description: Minutes before an agent is considered timed out
+  outputs:
+    type: list
+    description: Named outputs collected from sub-agents for consistency checking
+    items:
+      key:       { type: string }
+      agent_id:  { type: string }
+      value:     { type: string }
+      recorded_at: { type: datetime }
+  contradictions:
+    type: list
+    description: Flagged output contradictions awaiting resolution
+    items:
+      key:          { type: string }
+      agents:       { type: list, items: { type: string } }
+      values:       { type: list, items: { type: string } }
+      detected_at:  { type: datetime }
+      resolved:     { type: boolean }
+      resolution:   { type: string }
+  handoffs:
+    type: list
+    description: Inter-agent handoff records
+    items:
+      from_agent:  { type: string }
+      to_agent:    { type: string }
+      task:        { type: string }
+      context:     { type: string }
+      handed_at:   { type: datetime }
+      accepted_at: { type: datetime }
