@@ -1,0 +1,67 @@
+# Example runtime state for workspace-integrity-guardian
+# Lives at: ~/.openclaw/skill-state/workspace-integrity-guardian/state.yaml
+
+last_checked_at: "2026-03-15T03:00:07.991000"
+monitored_paths:
+  - "/Users/alice/.openclaw/workspace/SOUL.md"
+  - "/Users/alice/.openclaw/workspace/AGENTS.md"
+  - "/Users/alice/.openclaw/workspace/MEMORY.md"
+  - "/Users/alice/.openclaw/workspace/IDENTITY.md"
+baseline:
+  - path: "/Users/alice/.openclaw/workspace/SOUL.md"
+    sha256: "a3b7c1d9e4f82031..."
+    size_bytes: 4821
+    baselined_at: "2026-03-01T10:00:00.000000"
+  - path: "/Users/alice/.openclaw/workspace/AGENTS.md"
+    sha256: "f9e2c4a1b8d73055..."
+    size_bytes: 2304
+    baselined_at: "2026-03-01T10:00:00.000000"
+  - path: "/Users/alice/.openclaw/workspace/MEMORY.md"
+    sha256: "7c3a9b2e1f48d607..."
+    size_bytes: 8192
+    baselined_at: "2026-03-01T10:00:00.000000"
+drift_history:
+  - path: "/Users/alice/.openclaw/workspace/MEMORY.md"
+    detected_at: "2026-03-08T03:00:05.000000"
+    change_type: append_only
+    old_sha256: "7c3a9b2e1f48d607..."
+    new_sha256: "b1d4e7f2a9c03841..."
+    size_delta: 512
+    decision: accepted
+    decided_at: "2026-03-08T08:14:33.000000"
+
+  - path: "/Users/alice/.openclaw/workspace/SOUL.md"
+    detected_at: "2026-03-15T03:00:07.000000"
+    change_type: full_replacement
+    old_sha256: "a3b7c1d9e4f82031..."
+    new_sha256: "9f1e3d7b2c840a55..."
+    size_delta: -1204
+    decision: pending
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# First-time setup:
+#   python3 guard.py --baseline
+#   → "✓ Baselined: SOUL.md  (4,821 bytes)"
+#   → "✓ Baselined: AGENTS.md  (2,304 bytes)"
+#   → "✓ Baselined: MEMORY.md  (8,192 bytes)"
+#   → "Baseline recorded for 3 file(s)."
+#
+# Weekly cron (Sunday 03:00) detects SOUL.md was fully replaced:
+#   python3 guard.py --check
+#   → "⚠ Drift detected in 1 file(s):"
+#   → "  🔴 SOUL.md: full_replacement  (Δ-1,204 bytes)"
+#   → "Run --accept PATH to accept, or --restore PATH to revert."
+#
+# Agent surfaces this to user:
+#   "SOUL.md has been fully replaced (1,204 bytes shorter).
+#    This could indicate tampering by an installed skill.
+#    Restore from 2026-03-01 baseline, or accept new version?"
+#
+# User says "restore":
+#   python3 guard.py --restore ~/.openclaw/workspace/SOUL.md
+#   → "✓ Restored: SOUL.md from baseline (2026-03-01)"
+#
+# User says "accept" (they intentionally edited it):
+#   python3 guard.py --accept ~/.openclaw/workspace/SOUL.md
+#   → "✓ Accepted: SOUL.md — baseline updated"
