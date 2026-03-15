@@ -1,0 +1,32 @@
+version: "1.0"
+description: Cron skill audit history and weekly violation ledger.
+fields:
+  last_audit_at:
+    type: datetime
+  cron_ledger:
+    type: list
+    description: Daily cost estimates per cron skill (30-day rolling)
+    items:
+      date:       { type: string }
+      skill_name: { type: string }
+      est_usd:    { type: float }
+      token_count: { type: integer }
+  violations:
+    type: list
+    description: Active violations awaiting remediation
+    items:
+      skill_name:    { type: string }
+      rule:          { type: string }
+      severity:      { type: enum, values: [high, medium, low] }
+      details:       { type: string }
+      detected_at:   { type: datetime }
+      resolved:      { type: boolean }
+      est_waste_usd: { type: float }
+  audit_history:
+    type: list
+    description: Weekly audit summaries
+    items:
+      date:             { type: string }
+      crons_audited:    { type: integer }
+      violations_found: { type: integer }
+      est_monthly_waste_usd: { type: float }

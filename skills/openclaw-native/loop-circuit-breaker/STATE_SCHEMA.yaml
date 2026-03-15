@@ -1,0 +1,39 @@
+version: "1.0"
+description: >
+  Per-session tool call history for loop detection.
+  Tracks normalized (tool, args, error) signatures and fail counts.
+fields:
+  trip_threshold:
+    type: integer
+    default: 2
+    description: Number of identical failures before the circuit trips
+  session_id:
+    type: string
+    description: Current session ID (used to detect new sessions and reset)
+  call_history:
+    type: list
+    description: Rolling window of failed tool calls this session
+    items:
+      signature:    { type: string, description: "Normalized tool+args+error hash" }
+      tool_name:    { type: string }
+      args_summary: { type: string, description: "First 100 chars of args" }
+      error_type:   { type: string }
+      error_msg:    { type: string }
+      fail_count:   { type: integer }
+      first_seen:   { type: datetime }
+      last_seen:    { type: datetime }
+      tripped:      { type: boolean, default: false }
+  tripped_loops:
+    type: list
+    description: All loops that triggered a circuit break this session
+    items:
+      tool_name:    { type: string }
+      args_summary: { type: string }
+      error_msg:    { type: string }
+      fail_count:   { type: integer }
+      tripped_at:   { type: datetime }
+      resolved:     { type: boolean, default: false }
+      resolution:   { type: string }
+  total_loops_detected:
+    type: integer
+    default: 0

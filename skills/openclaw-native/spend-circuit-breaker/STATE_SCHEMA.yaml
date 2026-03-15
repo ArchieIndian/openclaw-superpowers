@@ -1,0 +1,46 @@
+version: "1.0"
+description: >
+  Tracks monthly API spend against a user-defined budget.
+  Circuit opens automatically at 100% to pause non-essential crons.
+fields:
+  monthly_budget_usd:
+    type: float
+    required: true
+    description: User's hard monthly cap in USD (set via --set-budget)
+  spend_this_month_usd:
+    type: float
+    default: 0.0
+    description: Estimated cumulative spend so far this calendar month
+  alert_thresholds:
+    type: list
+    default: [0.5, 0.75]
+    description: Fractional thresholds at which to notify user (0.5 = 50%)
+    items: { type: float }
+  circuit_open:
+    type: boolean
+    default: false
+    description: True when 100% budget is reached; pauses non-essential crons
+  last_checked_at:
+    type: datetime
+    description: Timestamp of last log parse
+  current_month:
+    type: string
+    description: "YYYY-MM of the current budget period (resets on new month)"
+  paused_crons:
+    type: list
+    description: Skill names whose crons were paused when circuit opened
+    items: { type: string }
+  spend_history:
+    type: list
+    description: Rolling 90-day daily spend log
+    items:
+      date:        { type: string }
+      usd:         { type: float }
+      sessions:    { type: integer }
+  custom_models:
+    type: list
+    description: User-added model price overrides
+    items:
+      name:         { type: string }
+      input_per_m:  { type: float, description: "$ per million input tokens" }
+      output_per_m: { type: float, description: "$ per million output tokens" }

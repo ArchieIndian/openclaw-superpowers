@@ -1,0 +1,54 @@
+# Example: multi-agent-coordinator state with 3 parallel agents
+timeout_minutes: 30
+agents:
+  - agent_id: coder
+    role: code_implementation
+    channel: C001
+    status: active
+    current_task: "Implement JWT auth middleware"
+    last_seen: "2026-03-15T11:40:00.000000"
+    registered_at: "2026-03-15T09:00:00.000000"
+    output_keys: [api_design]
+  - agent_id: reviewer
+    role: code_review
+    channel: C002
+    status: active
+    current_task: "Review PR #42 auth changes"
+    last_seen: "2026-03-15T11:38:00.000000"
+    registered_at: "2026-03-15T09:00:00.000000"
+    output_keys: [api_design]
+  - agent_id: docs-writer
+    role: documentation
+    channel: C003
+    status: timed_out
+    current_task: "Write API reference for auth endpoints"
+    last_seen: "2026-03-15T10:50:00.000000"
+    registered_at: "2026-03-15T09:00:00.000000"
+    output_keys: []
+contradictions:
+  - key: api_design
+    agents: [coder, reviewer]
+    values: ["POST /users", "PUT /users/{id}"]
+    detected_at: "2026-03-15T11:35:00.000000"
+    resolved: false
+    resolution: ""
+handoffs: []
+outputs:
+  - key: api_design
+    agent_id: coder
+    value: "POST /users"
+    recorded_at: "2026-03-15T11:30:00.000000"
+  - key: api_design
+    agent_id: reviewer
+    value: "PUT /users/{id}"
+    recorded_at: "2026-03-15T11:35:00.000000"
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Health check finds docs-writer timed out (50min, threshold 30min):
+#   python3 run.py --health-check
+#   → "✗ docs-writer — TIMED OUT (50min ago)"
+#   → Orchestrator prompts: "docs-writer hasn't responded. Reassign?"
+#
+# Consistency check finds api_design contradiction:
+#   python3 run.py --consistency-check --key api_design
+#   → "⚠ Contradiction: coder='POST /users' vs reviewer='PUT /users/{id}'"
+#   → Orchestrator halts merge and asks user to resolve.
