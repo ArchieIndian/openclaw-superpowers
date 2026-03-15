@@ -1,0 +1,27 @@
+# Example runtime state for project-onboarding
+projects:
+  - slug: my-saas-app
+    path: "/Users/alice/code/my-saas-app"
+    project_md: "/Users/alice/code/my-saas-app/PROJECT.md"
+    stack: [Node.js, TypeScript, React]
+    onboarded_at: "2026-02-10T14:00:00.000000"
+    last_refreshed: "2026-03-01T09:00:00.000000"
+    validated: true
+  - slug: payments-service
+    path: "/Users/alice/code/payments-service"
+    project_md: "/Users/alice/code/payments-service/PROJECT.md"
+    stack: [Python, FastAPI]
+    onboarded_at: "2026-03-12T11:00:00.000000"
+    last_refreshed: "2026-03-12T11:00:00.000000"
+    validated: false
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# First time in a new codebase:
+#   python3 onboard.py --scan /path/to/project --format markdown
+#   → Prints a filled PROJECT.md template with detected stack + commands
+#
+# After user validates:
+#   python3 onboard.py --register /path/to/project
+#   → Registers in state + writes PROJECT.md
+#
+# Agent auto-loads PROJECT.md on next session in that directory.
+# Monthly refresh: python3 onboard.py --refresh /path/to/project
