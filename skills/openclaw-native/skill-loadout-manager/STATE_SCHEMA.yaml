@@ -1,0 +1,29 @@
+version: "1.0"
+description: Named skill loadouts, active loadout pointer, and switch history.
+fields:
+  active_loadout:
+    type: string
+    default: "all"
+    description: Name of the currently active loadout ("all" means all skills active)
+  pinned_skills:
+    type: list
+    description: Skills always included regardless of active loadout
+    items:
+      type: string
+  loadouts:
+    type: object
+    description: Map of loadout_name -> loadout definition
+    items:
+      name:        { type: string }
+      skills:      { type: list, items: { type: string } }
+      description: { type: string }
+      created_at:  { type: datetime }
+      last_used:   { type: datetime }
+  switch_history:
+    type: list
+    description: Log of loadout switches (last 20)
+    items:
+      switched_at:    { type: datetime }
+      from_loadout:   { type: string }
+      to_loadout:     { type: string }
+      skill_count:    { type: integer }
