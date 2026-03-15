@@ -1,0 +1,76 @@
+# Example runtime state for config-encryption-auditor
+last_audit_at: "2026-03-16T09:00:15.332000"
+files_scanned: 14
+findings:
+  - file_path: "config/providers.yaml"
+    check: PLAINTEXT_API_KEY
+    severity: CRITICAL
+    detail: "Found OpenAI/Anthropic API key pattern in plaintext"
+    suggestion: "Migrate to environment variable or encrypted vault."
+    detected_at: "2026-03-16T09:00:15.000000"
+    resolved: false
+  - file_path: "config/integrations.yaml"
+    check: PLAINTEXT_TOKEN
+    severity: HIGH
+    detail: "Found Generic secret assignment pattern in plaintext"
+    suggestion: "Use environment variables instead of inline credentials."
+    detected_at: "2026-03-16T09:00:15.100000"
+    resolved: false
+  - file_path: "config/providers.yaml"
+    check: WORLD_READABLE
+    severity: HIGH
+    detail: "File permissions 644 — readable by other users"
+    suggestion: "Run: chmod 600 ~/.openclaw/config/providers.yaml"
+    detected_at: "2026-03-16T09:00:15.200000"
+    resolved: false
+  - file_path: "/Users/you/.openclaw"
+    check: NO_GITIGNORE
+    severity: MEDIUM
+    detail: "~/.openclaw not found in global .gitignore"
+    suggestion: "Add '.openclaw/' to ~/.gitignore to prevent accidental commits."
+    detected_at: "2026-03-16T09:00:15.300000"
+    resolved: false
+audit_history:
+  - audited_at: "2026-03-16T09:00:15.332000"
+    files_scanned: 14
+    critical_count: 1
+    high_count: 2
+    medium_count: 1
+  - audited_at: "2026-03-09T09:00:12.000000"
+    files_scanned: 12
+    critical_count: 0
+    high_count: 1
+    medium_count: 1
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs every Sunday at 9am:  python3 audit.py --scan
+#
+#   Config Encryption Audit — 2026-03-16
+#   ──────────────────────────────────────────────────
+#     14 files scanned | 1 CRITICAL | 2 HIGH | 1 MEDIUM
+#
+#     ✗ [CRITICAL] config/providers.yaml: PLAINTEXT_API_KEY
+#        Found OpenAI/Anthropic API key pattern in plaintext
+#        → Migrate to environment variable or encrypted vault.
+#
+#     ! [HIGH] config/integrations.yaml: PLAINTEXT_TOKEN
+#        Found Generic secret assignment pattern in plaintext
+#        → Use environment variables instead of inline credentials.
+#
+#     ! [HIGH] config/providers.yaml: WORLD_READABLE
+#        File permissions 644 — readable by other users
+#        → Run: chmod 600 ~/.openclaw/config/providers.yaml
+#
+#     ⚠ [MEDIUM] /Users/you/.openclaw: NO_GITIGNORE
+#        ~/.openclaw not found in global .gitignore
+#        → Add '.openclaw/' to ~/.gitignore to prevent accidental commits.
+#
+# python3 audit.py --fix-permissions
+#   ✓ chmod 600: /Users/you/.openclaw/config/providers.yaml
+#   ✓ Fixed permissions on 1 files.
+#
+# python3 audit.py --suggest-env
+#   Environment Variable Migration Guide
+#   ────────────────────────────────────────────────
+#   anthropic    → export OPENCLAW_ANTHROPIC_API_KEY="<your-key>"
+#   aws          → export OPENCLAW_AWS_ACCESS_KEY="<your-key>"
+#   ...

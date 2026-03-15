@@ -1,0 +1,27 @@
+version: "1.0"
+description: Config file audit results — plaintext secrets, permission issues, and migration suggestions.
+fields:
+  last_audit_at:
+    type: datetime
+  files_scanned:
+    type: integer
+    default: 0
+  findings:
+    type: list
+    items:
+      file_path:   { type: string }
+      check:       { type: enum, values: [PLAINTEXT_API_KEY, PLAINTEXT_TOKEN, WORLD_READABLE, NO_GITIGNORE, ENV_AVAILABLE] }
+      severity:    { type: enum, values: [CRITICAL, HIGH, MEDIUM, INFO] }
+      detail:      { type: string }
+      suggestion:  { type: string }
+      detected_at: { type: datetime }
+      resolved:    { type: boolean }
+  audit_history:
+    type: list
+    description: Rolling audit summaries (last 12)
+    items:
+      audited_at:     { type: datetime }
+      files_scanned:  { type: integer }
+      critical_count: { type: integer }
+      high_count:     { type: integer }
+      medium_count:   { type: integer }

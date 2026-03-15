@@ -1,0 +1,94 @@
+# Example runtime state for tool-description-optimizer
+last_scan_at: "2026-03-16T14:00:05.221000"
+skill_scores:
+  - skill_name: using-superpowers
+    description: "Bootstrap — teaches the agent how to find and invoke skills"
+    word_count: 11
+    clarity: 7.2
+    specificity: 3.8
+    keyword_density: 3.3
+    uniqueness: 8.1
+    length_score: 4.8
+    overall: 5.6
+    grade: C
+  - skill_name: config-encryption-auditor
+    description: "Scans OpenClaw config directories for plaintext API keys, tokens, and secrets in unencrypted files."
+    word_count: 15
+    clarity: 9.2
+    specificity: 8.5
+    keyword_density: 8.0
+    uniqueness: 9.0
+    length_score: 7.5
+    overall: 8.5
+    grade: A
+  - skill_name: memory-graph-builder
+    description: "Parses MEMORY.md into a knowledge graph with typed relationships, detects duplicates and contradictions, and generates a compressed memory digest."
+    word_count: 22
+    clarity: 8.8
+    specificity: 7.6
+    keyword_density: 7.2
+    uniqueness: 9.4
+    length_score: 9.5
+    overall: 8.5
+    grade: A
+scan_history:
+  - scanned_at: "2026-03-16T14:00:05.221000"
+    skills_scanned: 40
+    avg_score: 7.2
+    grade_distribution:
+      A: 18
+      B: 14
+      C: 6
+      D: 2
+      F: 0
+  - scanned_at: "2026-03-13T14:00:00.000000"
+    skills_scanned: 36
+    avg_score: 6.8
+    grade_distribution:
+      A: 14
+      B: 12
+      C: 7
+      D: 3
+      F: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 optimize.py --scan
+#
+#   Tool Description Quality Scan — 2026-03-16
+#   ────────────────────────────────────────────────────────────
+#     40 skills scanned | avg score: 7.2
+#     Grades: 18xA  14xB  6xC  2xD  0xF
+#
+#     ! [D] 3.8 — some-vague-skill
+#          clarity=2.0 spec=1.5 kw=1.2 uniq=8.0 len=6.5
+#          "A helpful utility tool that manages various things..."
+#
+#     ~ [C] 5.6 — using-superpowers
+#          clarity=7.2 spec=3.8 kw=3.3 uniq=8.1 len=4.8
+#          "Bootstrap — teaches the agent how to find and invoke skills"
+#
+# python3 optimize.py --suggest using-superpowers
+#
+#   Rewrite Suggestions: using-superpowers
+#   ──────────────────────────────────────────────────
+#     Current: "Bootstrap — teaches the agent how to find and invoke skills"
+#     Score: 5.6 (C)
+#
+#     1. Front-load action verb
+#        "Teaches the agent how to discover, invoke, and chain installed skills"
+#        Predicted: 7.4 (B) [+1.8]
+#
+# python3 optimize.py --compare "A tool that helps manage stuff" "Scans config files for plaintext secrets and suggests env var migration"
+#
+#   Description Comparison
+#   ──────────────────────────────────────────────────
+#     A: "A tool that helps manage stuff"
+#     B: "Scans config files for plaintext secrets and suggests env var migration"
+#
+#     Clarity       A=2.0   B=9.5   B
+#     Specificity   A=0.0   B=8.5   B
+#     Keywords      A=0.0   B=7.8   B
+#     Uniqueness    A=7.0   B=7.0   =
+#     Length        A=5.2   B=8.8   B
+#     OVERALL       A=2.8   B=8.4   B
+#
+#     Grade:  A=D  B=A
