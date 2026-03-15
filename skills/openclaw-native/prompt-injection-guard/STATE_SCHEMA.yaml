@@ -1,0 +1,36 @@
+version: "1.0"
+description: >
+  Tracks every external content scan: source, signals found, and action taken.
+  Used to surface injection attempt history and detect repeat attackers.
+fields:
+  last_scan_at:
+    type: datetime
+    description: Timestamp of the most recent scan
+  total_scans:
+    type: integer
+    default: 0
+    description: Cumulative scan count this session
+  total_blocked:
+    type: integer
+    default: 0
+    description: Number of times content was blocked
+  total_warned:
+    type: integer
+    default: 0
+    description: Number of times a warning was surfaced
+  recent_scans:
+    type: list
+    description: Rolling log of the last 20 scan results
+    items:
+      timestamp:   { type: datetime }
+      source:      { type: string, description: "URL, channel, or file path" }
+      signals:     { type: list, items: { type: string }, description: "Detected injection signal types" }
+      action:      { type: enum, values: [clean, warned, blocked, override] }
+      excerpt:     { type: string, description: "First 200 chars of flagged content (blocked/warned only)" }
+  blocklist:
+    type: list
+    description: Sources that have triggered 2+ blocks — auto-warn on future content from these
+    items:
+      source:   { type: string }
+      count:    { type: integer }
+      first_at: { type: datetime }
