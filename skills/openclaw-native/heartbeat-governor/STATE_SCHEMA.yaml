@@ -1,0 +1,41 @@
+version: "1.0"
+description: Per-skill execution budgets, spend ledgers, pause flags, and breach log.
+fields:
+  skill_ledgers:
+    type: object
+    description: Map of skill_name -> budget + rolling spend ledger
+    items:
+      budget:
+        type: object
+        properties:
+          max_usd_monthly:   { type: float, default: 5.0 }
+          max_usd_per_run:   { type: float, default: 0.5 }
+          max_wall_minutes:  { type: integer, default: 30 }
+          max_runs_daily:    { type: integer, default: 48 }
+      paused:       { type: boolean, default: false }
+      pause_reason: { type: string }
+      paused_at:    { type: datetime }
+      runs:
+        type: list
+        description: Rolling 30-day run log
+        items:
+          ran_at:      { type: datetime }
+          usd_spent:   { type: float }
+          wall_minutes: { type: float }
+  breach_log:
+    type: list
+    description: All budget breach events
+    items:
+      skill_name:   { type: string }
+      breach_type:  { type: enum, values: [monthly_usd, per_run_usd, wall_clock, daily_runs] }
+      value:        { type: float }
+      limit:        { type: float }
+      breached_at:  { type: datetime }
+      resolved:     { type: boolean }
+  monthly_summary:
+    type: object
+    description: Aggregated spend by skill for current calendar month
+    items:
+      skill_name:  { type: string }
+      total_usd:   { type: float }
+      total_runs:  { type: integer }
