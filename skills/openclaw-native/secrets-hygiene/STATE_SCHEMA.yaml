@@ -1,0 +1,14 @@
+version: "1.0"
+fields:
+  last_audit_at: { type: datetime, description: "Timestamp of last completed audit" }
+  tracked_secrets:
+    type: list
+    description: "All known secrets and their metadata"
+    items:
+      name:              { type: string }
+      skills_with_access: { type: list, items: { type: string } }
+      last_rotated:      { type: string, description: "ISO date or 'unknown'" }
+      flagged:           { type: boolean, default: false }
+  flagged_count:   { type: integer, default: 0, description: "Secrets flagged for rotation in last audit" }
+  orphaned_count:  { type: integer, default: 0, description: "Secrets with no active skill using them" }
+  status:          { type: enum, values: [idle, running, done], default: idle }

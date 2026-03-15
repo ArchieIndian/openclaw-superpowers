@@ -1,0 +1,6 @@
+version: "1.0"
+fields:
+  vault_path:    { type: string, required: true, description: "Absolute path to the Obsidian vault root" }
+  last_sync_at:  { type: datetime, description: "Timestamp of last successful sync" }
+  notes_written: { type: integer, default: 0, description: "Number of files written in last sync" }
+  status:        { type: enum, values: [unconfigured, idle, running, done], default: unconfigured }

@@ -1,0 +1,6 @@
+version: "1.0"
+fields:
+  last_briefing_date: { type: string, description: "ISO date YYYY-MM-DD of last delivered briefing" }
+  delivered_at:       { type: datetime, description: "Full timestamp of last delivery" }
+  items_count:        { type: integer, description: "Total items included in last briefing" }
+  status:             { type: enum, values: [idle, delivered, skipped], default: idle }
