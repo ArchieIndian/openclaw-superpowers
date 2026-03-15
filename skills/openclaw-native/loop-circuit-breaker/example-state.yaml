@@ -1,0 +1,50 @@
+# Example runtime state for loop-circuit-breaker
+# Lives at: ~/.openclaw/skill-state/loop-circuit-breaker/state.yaml
+
+trip_threshold: 2
+session_id: "sess_20260315_0901"
+total_loops_detected: 1
+call_history:
+  - signature: "a3f7c91b2e44"
+    tool_name: read
+    args_summary: '{"path": ""}'
+    error_type: "missing required parameter"
+    error_msg: "missing required parameter: path"
+    fail_count: 2
+    first_seen: "2026-03-15T09:01:44.000000"
+    last_seen:  "2026-03-15T09:01:46.000000"
+    tripped: true
+
+tripped_loops:
+  - tool_name: read
+    args_summary: '{"path": ""}'
+    error_msg: "missing required parameter: path"
+    fail_count: 2
+    tripped_at: "2026-03-15T09:01:46.000000"
+    resolved: false
+    resolution: ""
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# Scenario: Agent calls read({}) — missing 'path'. OpenClaw retries.
+#
+# First failure:
+#   python3 check.py --record --tool read --args '{}' --error "missing required parameter: path"
+#   → "ok: read() fail #1/2"     (exit 0 — agent may retry once)
+#
+# Second identical failure:
+#   python3 check.py --record --tool read --args '{}' --error "missing required parameter: path"
+#   → "TRIP: Loop detected on read() — 2 identical failures."   (exit 2)
+#
+# Agent sees exit 2 and stops retrying. It tells the user:
+#   "I've detected a retry loop on read(). The error is:
+#    'missing required parameter: path'. I've stopped retrying.
+#    Options: (1) provide the correct path, (2) skip this step, (3) abort task."
+#
+# User says "the file is at /Users/alice/notes.md":
+#   python3 check.py --resolve read --resolution "User provided path: /Users/alice/notes.md"
+#   → "✓ Loop resolved: read() — User provided path: /Users/alice/notes.md"
+#
+# Status:
+#   python3 check.py --status
+#   → Trip threshold: 2  |  Open circuits: 1  |  Total detected: 1
