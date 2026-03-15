@@ -1,0 +1,57 @@
+# Example runtime state for skill-doctor
+last_scan_at: "2026-03-15T09:12:44.003000"
+skills_scanned: 32
+fail_count: 2
+warn_count: 1
+violations:
+  - skill_name: my-custom-skill
+    level: FAIL
+    check: YAML_PARSE
+    message: "Frontmatter unparseable: mapping values are not allowed here"
+    fix_hint: "Fix YAML syntax in the --- block at the top of SKILL.md."
+    detected_at: "2026-03-15T09:12:44.000000"
+    resolved: false
+  - skill_name: expense-tracker
+    level: FAIL
+    check: STATEFUL_NO_SCHEMA
+    message: "`stateful: true` in frontmatter but STATE_SCHEMA.yaml is missing"
+    fix_hint: "Create STATE_SCHEMA.yaml with `version:` and `fields:` keys."
+    detected_at: "2026-03-15T09:12:44.000000"
+    resolved: false
+  - skill_name: obsidian-sync
+    level: WARN
+    check: SCHEMA_NO_STATEFUL
+    message: "STATE_SCHEMA.yaml exists but `stateful: true` is absent from frontmatter"
+    fix_hint: "Add `stateful: true` to the frontmatter block."
+    detected_at: "2026-03-15T09:12:44.000000"
+    resolved: false
+scan_history:
+  - scanned_at: "2026-03-15T09:12:44.000000"
+    skills_scanned: 32
+    fail_count: 2
+    warn_count: 1
+  - scanned_at: "2026-03-14T08:00:11.000000"
+    skills_scanned: 31
+    fail_count: 0
+    warn_count: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Run:  python3 doctor.py --scan
+#   Skill Doctor Report — 2026-03-15 09:12
+#   ────────────────────────────────────────────────────────────────
+#     Skills scanned : 32
+#     FAILs          : 2
+#     WARNs          : 1
+#
+#   ✗ [FAIL] my-custom-skill: YAML_PARSE
+#            Frontmatter unparseable: mapping values are not allowed here
+#   ✗ [FAIL] expense-tracker: STATEFUL_NO_SCHEMA
+#            `stateful: true` in frontmatter but STATE_SCHEMA.yaml is missing
+#   ⚠ [WARN] obsidian-sync: SCHEMA_NO_STATEFUL
+#            STATE_SCHEMA.yaml exists but `stateful: true` is absent
+#
+# Run:  python3 doctor.py --fix-hint expense-tracker
+#   Fix hints for: expense-tracker
+#   ────────────────────────────────────────────────────────────────
+#   [FAIL] STATEFUL_NO_SCHEMA
+#     Problem : `stateful: true` in frontmatter but STATE_SCHEMA.yaml is missing
+#     Fix     : Create STATE_SCHEMA.yaml with `version:` and `fields:` keys.
