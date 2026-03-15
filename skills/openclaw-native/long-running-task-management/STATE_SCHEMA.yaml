@@ -1,0 +1,16 @@
+version: "1.0"
+fields:
+  task_id:      { type: string, required: true, description: "Unique identifier for the active task" }
+  status:       { type: enum, values: [pending, in_progress, paused, complete], default: pending }
+  description:  { type: string, description: "One-sentence goal of the task" }
+  stages:
+    type: list
+    description: "Ordered steps with individual status tracking"
+    items:
+      name:   { type: string }
+      status: { type: enum, values: [pending, in_progress, complete] }
+      notes:  { type: string }
+  checkpoint:   { type: string, description: "Prose description of last known stable state" }
+  next_action:  { type: string, description: "First concrete thing to do on resume" }
+  started_at:   { type: datetime, description: "ISO 8601 timestamp when task was created" }
+  last_updated: { type: datetime, description: "ISO 8601 timestamp of most recent state write" }

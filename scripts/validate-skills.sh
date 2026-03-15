@@ -62,6 +62,43 @@ validate_skill() {
     echo "WARN: $dir_name — $line_count lines (recommended: under 80)"
   fi
 
+  # Extract optional cron field
+  local fm_cron
+  fm_cron="$(sed -n '2,/^---$/p' "$skill_file" | grep '^cron:' | sed 's/^cron: *//' | tr -d '"'"'" || true)"
+  if [ -n "$fm_cron" ]; then
+    # Validate 5-field cron expression format
+    if ! echo "$fm_cron" | grep -qE '^[0-9*/,\-]+ [0-9*/,\-]+ [0-9*/,\-]+ [0-9*/,\-]+ [0-9*/,\-]+$'; then
+      echo "FAIL: $dir_name — invalid cron expression '$fm_cron' (must be 5 space-separated fields)"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # Extract optional stateful field
+  local fm_stateful
+  fm_stateful="$(sed -n '2,/^---$/p' "$skill_file" | grep '^stateful:' | sed 's/^stateful: *//' | tr -d '[:space:]' || true)"
+
+  # If stateful: true, STATE_SCHEMA.yaml must exist
+  if [ "$fm_stateful" = "true" ]; then
+    if [ ! -f "$skill_dir/STATE_SCHEMA.yaml" ]; then
+      echo "FAIL: $dir_name — stateful: true but STATE_SCHEMA.yaml is missing"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+
+  # If STATE_SCHEMA.yaml exists, stateful: true must be in frontmatter
+  if [ -f "$skill_dir/STATE_SCHEMA.yaml" ]; then
+    if [ "$fm_stateful" != "true" ]; then
+      echo "WARN: $dir_name — STATE_SCHEMA.yaml present but frontmatter missing 'stateful: true'"
+    fi
+    # Check STATE_SCHEMA.yaml has required keys
+    if ! grep -q '^version:' "$skill_dir/STATE_SCHEMA.yaml"; then
+      echo "WARN: $dir_name — STATE_SCHEMA.yaml missing 'version:' key"
+    fi
+    if ! grep -q '^fields:' "$skill_dir/STATE_SCHEMA.yaml"; then
+      echo "WARN: $dir_name — STATE_SCHEMA.yaml missing 'fields:' key"
+    fi
+  fi
+
   # If we got here without errors for this skill, it's valid
   if [ $ERRORS -eq 0 ] 2>/dev/null; then
     echo "  OK: $dir_name"

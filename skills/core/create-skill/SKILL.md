@@ -17,6 +17,7 @@ Answer these questions before writing anything:
    - **Core:** General agent methodology (brainstorming, debugging, planning). Works in any agent runtime.
    - **OpenClaw-native:** Requires persistence, long-running sessions, or memory. Specific to OpenClaw's always-on model.
 4. **Does an existing skill already cover this?** If yes, extend it instead of creating a new one.
+5. **Does this skill need to persist state between sessions or wakeups?** If yes → `stateful: true` + `STATE_SCHEMA.yaml`.
 
 ## Step 2: Choose a Name
 
@@ -26,44 +27,26 @@ Answer these questions before writing anything:
 
 ## Step 3: Scaffold the Skill
 
-Create the directory and file:
+Create the directory and files:
 
 ```
 skills/<core|openclaw-native>/<skill-name>/
-  └── SKILL.md
+  ├── SKILL.md
+  └── STATE_SCHEMA.yaml   # only if stateful: true
 ```
 
-Use this template for `SKILL.md`:
+Use the frontmatter template for `SKILL.md` (optional fields shown as comments):
 
 ```markdown
 ---
 name: <skill-name>
 description: <One sentence — what it does and when to use it.>
+# cron: "<5-field cron expression>"   # optional: if skill runs on a schedule
+# stateful: true                       # optional: if skill persists state
 ---
-
-# <Skill Title>
-
-<One-line philosophy or core principle.>
-
-## When to Use
-
-<Bullet list of specific triggers — when should the agent reach for this skill?>
-
-## The Process
-
-<Numbered steps the agent follows. Each step should be:>
-<- Concrete and actionable>
-<- Independently verifiable>
-<- Short enough to hold in working memory>
-
-## Key Principles
-
-<Bulleted list of rules or guidelines that shape how the process is applied.>
-
-## OpenClaw-Specific Notes
-
-<Optional. Only include if there are persistence, memory, or long-session considerations.>
 ```
+
+See [TEMPLATE.md](TEMPLATE.md) for the full content structure.
 
 ## Step 4: Write the Content
 
@@ -75,6 +58,7 @@ Follow these conventions (learned from existing skills):
 - **Include decision criteria.** Tell the agent *when* to use it and *when not to*.
 - **Use checklists** for verification steps (see `verification-before-completion`).
 - **Add checkpoint guidance** if the skill applies to work spanning multiple sessions.
+- **State in prose is a mistake.** If your skill describes saving progress to markdown or memory files, use `stateful: true` + `STATE_SCHEMA.yaml` instead.
 
 ## Step 5: Validate
 
@@ -87,14 +71,18 @@ Before committing, check:
 - [ ] **Under 80 lines** — if longer, consider splitting
 - [ ] **Actionable** — every step tells the agent what to *do*, not what to *think about*
 - [ ] **Testable** — you can tell whether the agent followed the skill correctly by looking at its output
+- [ ] If `stateful: true` — `STATE_SCHEMA.yaml` exists with `version:` and `fields:` keys
+- [ ] If `cron:` is set — expression is valid 5-field cron syntax
 
 ## Step 6: Register
 
-No registration step needed. OpenClaw auto-discovers skills from the extensions directory structure. Just ensure:
+No manual registration needed. OpenClaw auto-discovers skills from the extensions directory. Ensure:
 
 1. The directory is under `skills/core/` or `skills/openclaw-native/`
 2. The file is named exactly `SKILL.md`
 3. The install symlink is in place (`install.sh` handles this)
+4. For stateful skills, `install.sh` creates `~/.openclaw/skill-state/<skill-name>/` automatically
+5. For skills with `cron:`, `install.sh` registers them with OpenClaw's cron on next run
 
 ## Common Mistakes
 
@@ -102,3 +90,4 @@ No registration step needed. OpenClaw auto-discovers skills from the extensions 
 - **Too broad.** If a skill covers more than one distinct workflow, split it.
 - **Missing triggers.** Without clear "when to use" criteria, the agent won't know to invoke it.
 - **Duplicating existing skills.** Check `brainstorming`, `writing-plans`, `systematic-debugging`, and `verification-before-completion` before creating something similar.
+- **State in prose.** If your skill describes saving progress to markdown or memory files, use `stateful: true` with a `STATE_SCHEMA.yaml` instead — it's structured, machine-readable, and resumable.

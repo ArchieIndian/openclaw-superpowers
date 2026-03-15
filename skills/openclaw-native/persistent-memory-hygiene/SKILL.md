@@ -1,9 +1,13 @@
 ---
 name: persistent-memory-hygiene
 description: Keeps OpenClaw's memory store clean, structured, and useful. Use at session end and during periodic maintenance.
+cron: "0 23 * * *"
+stateful: true
 ---
 
 # Persistent Memory Hygiene
+
+State file: `~/.openclaw/skill-state/persistent-memory-hygiene/state.yaml`
 
 ## Memory Structure
 
@@ -36,7 +40,16 @@ Write to MEMORY.md when:
 - Decisions: [choices made and why]
 ```
 
+After writing, update state: `last_cleaned_at`, `memory_line_count`, `daily_file_count`, `last_daily_file`, `status: done`.
+
 ## Hygiene Rules
 
 - Daily files: write raw, append-only, never edit old entries
 - MEMORY.md: review periodically, remove stale entries, keep under 500 lines
+
+## Cron Wakeup Behavior
+
+On 11pm wakeup:
+- Read state file
+- If `last_cleaned_at` is today's date: skip (already ran)
+- Otherwise: run Session Closing Routine, update state
