@@ -228,4 +228,3 @@ Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
 - **[openclaw/openclaw](https://github.com/openclaw/openclaw)** — the open-source AI agent runtime
 - **[obra/superpowers](https://github.com/obra/superpowers)** — Jesse Vincent's skills framework; core skills adapted under MIT license
-- **[OpenLobster](https://github.com/Neirth/OpenLobster)** — inspiration for memory graph, config encryption auditing, tool-description scoring, and MCP health monitoring
