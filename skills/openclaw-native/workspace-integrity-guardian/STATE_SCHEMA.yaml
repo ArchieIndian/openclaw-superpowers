@@ -1,0 +1,38 @@
+version: "1.0"
+description: >
+  Baseline hashes for critical workspace files.
+  Drift history records every detected change and the user's decision.
+fields:
+  baseline:
+    type: list
+    description: SHA-256 hashes of files at last-known-good state
+    items:
+      path:          { type: string }
+      sha256:        { type: string }
+      size_bytes:    { type: integer }
+      baselined_at:  { type: datetime }
+  monitored_paths:
+    type: list
+    description: Full paths of files being monitored
+    items: { type: string }
+  last_checked_at:
+    type: datetime
+  drift_history:
+    type: list
+    description: All detected drifts and user decisions
+    items:
+      path:         { type: string }
+      detected_at:  { type: datetime }
+      change_type:  { type: enum, values: [append_only, truncation, full_replacement, deletion] }
+      old_sha256:   { type: string }
+      new_sha256:   { type: string }
+      size_delta:   { type: integer }
+      decision:     { type: enum, values: [accepted, restored, pending] }
+      decided_at:   { type: datetime }
+  baseline_content:
+    type: list
+    description: Stored file contents for restore capability (base64 encoded)
+    items:
+      path:       { type: string }
+      content_b64: { type: string }
+      stored_at:  { type: datetime }
