@@ -1,0 +1,27 @@
+version: "1.0"
+description: Compatibility check results against the current OpenClaw version.
+fields:
+  last_check_at:
+    type: datetime
+  openclaw_version:
+    type: string
+    description: OpenClaw version at time of last check
+  incompatibilities:
+    type: list
+    description: Skills that failed or warned during the last check
+    items:
+      skill_name:   { type: string }
+      level:        { type: enum, values: [FAIL, WARN] }
+      constraint:   { type: string }
+      feature:      { type: string }
+      detail:       { type: string }
+      detected_at:  { type: datetime }
+  check_history:
+    type: list
+    description: Rolling log of past checks (last 10)
+    items:
+      checked_at:          { type: datetime }
+      openclaw_version:    { type: string }
+      skills_checked:      { type: integer }
+      fail_count:          { type: integer }
+      warn_count:          { type: integer }
