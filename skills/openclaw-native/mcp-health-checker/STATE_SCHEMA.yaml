@@ -1,0 +1,31 @@
+version: "1.0"
+description: MCP server health records, per-server status, and check history.
+fields:
+  last_check_at:
+    type: datetime
+  servers:
+    type: list
+    description: Per-server health status from the most recent check
+    items:
+      name:         { type: string, description: "Server name from config" }
+      transport:    { type: string, description: "stdio or http" }
+      status:       { type: enum, values: [healthy, degraded, unreachable, unknown] }
+      latency_ms:   { type: integer, description: "Response time in milliseconds" }
+      last_seen_at: { type: datetime, description: "Last successful probe" }
+      tool_count:   { type: integer, description: "Number of tools exposed" }
+      findings:
+        type: list
+        items:
+          check:    { type: string }
+          severity: { type: string }
+          detail:   { type: string }
+      checked_at:   { type: datetime }
+  check_history:
+    type: list
+    description: Rolling log of past checks (last 20)
+    items:
+      checked_at:       { type: datetime }
+      servers_checked:  { type: integer }
+      healthy:          { type: integer }
+      degraded:         { type: integer }
+      unreachable:      { type: integer }
