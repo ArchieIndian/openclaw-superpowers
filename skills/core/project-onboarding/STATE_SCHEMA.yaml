@@ -1,0 +1,14 @@
+version: "1.0"
+description: Registry of onboarded projects and their PROJECT.md locations.
+fields:
+  projects:
+    type: list
+    description: All onboarded projects
+    items:
+      slug:            { type: string }
+      path:            { type: string, description: "Absolute path to project root" }
+      project_md:      { type: string, description: "Path to generated PROJECT.md" }
+      stack:           { type: list, items: { type: string } }
+      onboarded_at:    { type: datetime }
+      last_refreshed:  { type: datetime }
+      validated:       { type: boolean, description: "User confirmed PROJECT.md is correct" }
