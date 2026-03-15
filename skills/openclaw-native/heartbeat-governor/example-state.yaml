@@ -1,0 +1,64 @@
+# Example runtime state for heartbeat-governor
+skill_ledgers:
+  morning-briefing:
+    budget:
+      max_usd_monthly: 4.00
+      max_usd_per_run: 0.30
+      max_wall_minutes: 15
+      max_runs_daily: 1
+    paused: false
+    pause_reason: null
+    paused_at: null
+    runs:
+      - ran_at: "2026-03-15T07:00:05.000000"
+        usd_spent: 0.18
+        wall_minutes: 6.2
+      - ran_at: "2026-03-14T07:00:03.000000"
+        usd_spent: 0.21
+        wall_minutes: 7.1
+  long-running-task-management:
+    budget:
+      max_usd_monthly: 5.00
+      max_usd_per_run: 0.50
+      max_wall_minutes: 30
+      max_runs_daily: 96
+    paused: true
+    pause_reason: "30-day spend $5.12 reached monthly limit $5.00"
+    paused_at: "2026-03-15T08:00:00.000000"
+    runs: []
+  cron-hygiene:
+    budget:
+      max_usd_monthly: 1.00
+      max_usd_per_run: 0.10
+      max_wall_minutes: 10
+      max_runs_daily: 2
+    paused: false
+    pause_reason: null
+    paused_at: null
+    runs:
+      - ran_at: "2026-03-10T09:00:07.000000"
+        usd_spent: 0.07
+        wall_minutes: 2.1
+breach_log:
+  - skill_name: long-running-task-management
+    breach_type: monthly_usd
+    value: 5.12
+    limit: 5.00
+    breached_at: "2026-03-15T08:00:00.000000"
+    resolved: false
+monthly_summary: {}
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Hourly cron runs:  python3 governor.py --check
+#
+#   Heartbeat Governor — 2026-03-15 08:00
+#   ──────────────────────────────────────────────────────────────
+#   ⏸ Paused: long-running-task-management
+#
+# python3 governor.py --status
+#   Skill                           Spend    Budget     %  Status
+#   cron-hygiene                    $0.07    $1.00   7%  ✓
+#   long-running-task-management    $5.12    $5.00  102%  ⏸ PAUSED
+#   morning-briefing                $0.39    $4.00   10%  ✓
+#
+# python3 governor.py --resume long-running-task-management
+#   ✓ Resumed 'long-running-task-management'. Will fire on next scheduled run.
