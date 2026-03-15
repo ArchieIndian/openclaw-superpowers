@@ -1,0 +1,75 @@
+# Example runtime state for dangerous-action-guard
+# Lives at: ~/.openclaw/skill-state/dangerous-action-guard/state.yaml
+
+pending_action: null   # no action awaiting confirmation right now
+total_executed: 12
+total_rejected: 3
+total_expired: 1
+audit_trail:
+  - description: "git push --force origin main"
+    category: git_destructive
+    command: "git push --force origin main"
+    scope: "remote main branch (overwrites 2 commits)"
+    reversible: false
+    requested_at: "2026-03-15T11:04:00.000000"
+    outcome: rejected
+    rejected_at: "2026-03-15T11:04:22.000000"
+
+  - description: "rm -rf /Users/alice/project/tmp"
+    category: file_destruction
+    command: "rm -rf /Users/alice/project/tmp"
+    scope: "/Users/alice/project/tmp (47 files, 12 MB)"
+    reversible: false
+    requested_at: "2026-03-15T10:30:11.000000"
+    outcome: executed
+    confirmed_at: "2026-03-15T10:30:28.000000"
+    confirmation: "yes go ahead"
+
+  - description: "Send email to all-eng@company.com"
+    category: external_messaging
+    command: "send_email(to='all-eng@company.com', subject='Deploy complete')"
+    scope: "all-eng@company.com (142 recipients)"
+    reversible: false
+    requested_at: "2026-03-14T17:55:00.000000"
+    outcome: executed
+    confirmed_at: "2026-03-14T17:55:14.000000"
+    confirmation: "confirmed"
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# Scenario: Agent is about to run `git push --force`.
+#
+# 1. Agent calls:
+#    python3 audit.py --pending "git push --force origin main" \
+#      --category git_destructive \
+#      --scope "remote main branch (overwrites 2 commits)" \
+#
+#    Output:
+#      ⏳ Pending confirmation: git push --force origin main
+#         Category:   git_destructive
+#         Scope:      remote main branch (overwrites 2 commits)
+#         Reversible: NO
+#         Expires:    5 minutes from now
+#
+# 2. Agent tells user:
+#    "I'm about to run `git push --force origin main`.
+#     This will overwrite 2 commits on the remote main branch and cannot be undone.
+#     Confirm with 'yes' to proceed."
+#
+# 3. User says "yes":
+#    python3 audit.py --confirm "git push --force origin main" --phrase "yes"
+#    → "✓ Action confirmed and logged"
+#    → Agent executes the push.
+#
+# 4. User says "no":
+#    python3 audit.py --reject "git push --force origin main"
+#    → "✗ Action rejected and logged"
+#    → Agent does not execute.
+#
+# 5. 5 minutes pass with no response:
+#    python3 audit.py --expire-stale
+#    → "⏰ Expired pending action: git push --force origin main"
+#    → Agent re-prompts user if still needed.
+#
+# Review trail:
+#    python3 audit.py --history --last 10
