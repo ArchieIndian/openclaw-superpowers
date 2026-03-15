@@ -26,6 +26,17 @@ New contributors should use `skills/community/`. Proven community skills may be 
 - Keep skills under 80 lines — if it's longer, consider splitting
 - Frontmatter `name` must match the directory name
 - Include clear "When to Use" triggers so the agent knows when to invoke it
+- If your skill persists state between sessions, set `stateful: true` in frontmatter and include `STATE_SCHEMA.yaml` in the skill directory
+- If your skill should run on a schedule, set `cron: "<expression>"` in frontmatter — `install.sh` handles registration automatically
+
+## Stateful Skills
+
+Use `stateful: true` when your skill needs to remember data between separate invocations (e.g. tracking progress across a multi-session task, recording last-run timestamps to prevent duplicate runs).
+
+- **`STATE_SCHEMA.yaml`** is committed alongside `SKILL.md` — it documents the shape of runtime state and is portable across machines
+- **Runtime state** lives at `~/.openclaw/skill-state/<skill-name>/state.yaml` on each local machine — never committed, created automatically by `install.sh`
+- Schema format: start with `version: "1.0"` and a `fields:` block. See any existing `skills/openclaw-native/*/STATE_SCHEMA.yaml` for examples.
+- Community skills should default to **stateless** unless state is genuinely required — don't add `stateful: true` for simple methodology skills
 
 ## Validation
 
@@ -35,7 +46,7 @@ Run the validation script before submitting:
 ./scripts/validate-skills.sh
 ```
 
-It checks: frontmatter format, naming conventions, file structure, and line count.
+It checks: frontmatter format, naming conventions, file structure, line count, stateful skill coherence (`STATE_SCHEMA.yaml` present when `stateful: true`), and cron expression format.
 
 ## Pull Requests
 

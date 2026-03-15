@@ -1,0 +1,7 @@
+version: "1.0"
+fields:
+  last_cleaned_at:   { type: datetime, description: "Timestamp of the last completed hygiene run" }
+  memory_line_count: { type: integer, description: "Line count of MEMORY.md at last clean" }
+  daily_file_count:  { type: integer, description: "Number of memory/YYYY-MM-DD.md files at last clean" }
+  last_daily_file:   { type: string, description: "Filename of most recent daily memory entry" }
+  status:            { type: enum, values: [idle, running, done], default: idle }
