@@ -38,9 +38,13 @@ openclaw gateway restart
 
 That's it. Your agent now has superpowers.
 
+---
+
 ## Skills Included
 
-### Core (10 skills — adapted from obra/superpowers)
+### Core (12 skills)
+
+Methodology skills that work in any runtime. Adapted from [obra/superpowers](https://github.com/obra/superpowers) plus OpenClaw-specific additions.
 
 | Skill | Purpose | Script |
 |---|---|---|
@@ -54,8 +58,12 @@ That's it. Your agent now has superpowers.
 | `subagent-driven-development` | Parallel subagent execution for complex tasks | — |
 | `create-skill` | **Writes new skills during conversation** | — |
 | `skill-vetting` | Security scanner for ClawHub skills before installing | `vet.sh` |
+| `project-onboarding` | Crawls a new codebase to generate a `PROJECT.md` context file | `onboard.py` |
+| `fact-check-before-trust` | Secondary verification pass for factual claims before acting on them | — |
 
-### OpenClaw-Native (10 skills — new, not in superpowers)
+### OpenClaw-Native (18 skills)
+
+Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. Not useful in session-based tools.
 
 | Skill | Purpose | Cron | Stateful | Script |
 |---|---|---|---|---|
@@ -66,28 +74,52 @@ That's it. Your agent now has superpowers.
 | `context-window-management` | Prevents context overflow on long-running sessions | — | ✓ | — |
 | `daily-review` | End-of-day structured summary and next-session prep | weekdays 6pm | ✓ | — |
 | `morning-briefing` | Daily briefing: priorities, active tasks, pending handoffs | weekdays 7am | ✓ | `run.py` |
-| `secrets-hygiene` | Audits skills for stale credentials and flags orphaned secrets | Mondays 9am | ✓ | `audit.py` |
-| `workflow-orchestration` | Chains skills into resumable named workflows with conditions | — | ✓ | `run.py` |
-| `context-budget-guard` | Proactively estimates context usage and triggers compaction | — | ✓ | `check.py` |
+| `secrets-hygiene` | Audits installed skills for stale credentials and orphaned secrets | Mondays 9am | ✓ | `audit.py` |
+| `workflow-orchestration` | Chains skills into resumable named workflows with on-failure conditions | — | ✓ | `run.py` |
+| `context-budget-guard` | Estimates context usage and triggers compaction before overflow | — | ✓ | `check.py` |
+| `prompt-injection-guard` | Detects injection attempts in external content before the agent acts | — | ✓ | `guard.py` |
+| `spend-circuit-breaker` | Tracks API spend against a monthly budget; pauses crons at 100% | every 4h | ✓ | `check.py` |
+| `dangerous-action-guard` | Requires explicit user confirmation before irreversible actions | — | ✓ | `audit.py` |
+| `loop-circuit-breaker` | Detects infinite retry loops from deterministic errors and breaks them | — | ✓ | `check.py` |
+| `workspace-integrity-guardian` | Detects drift or tampering in SOUL.md, AGENTS.md, MEMORY.md | Sundays 3am | ✓ | `guard.py` |
+| `multi-agent-coordinator` | Manages parallel agent fleets: health checks, consistency, handoffs | — | ✓ | `run.py` |
+| `cron-hygiene` | Audits cron skills for session mode waste and token efficiency | Mondays 9am | ✓ | `audit.py` |
+| `channel-context-bridge` | Writes a resumé card at session end for seamless channel switching | — | ✓ | `bridge.py` |
 
 ### Community (1 skill)
+
+Skills written by agents and contributors. Lives in `skills/community/`. Any agent can add a community skill via `create-skill`. Community skills default to stateless but may use `STATE_SCHEMA.yaml` when persistence is genuinely needed.
 
 | Skill | Purpose | Cron | Stateful | Script |
 |---|---|---|---|---|
 | `obsidian-sync` | Syncs OpenClaw memory to an Obsidian vault nightly | daily 10pm | ✓ | `sync.py` |
 
-### How State Works
+---
+
+## How State Works
 
 Stateful skills commit a `STATE_SCHEMA.yaml` defining the shape of their runtime data. At install time, `install.sh` creates `~/.openclaw/skill-state/<skill-name>/state.yaml` on your local machine. The agent reads and writes this file during execution — enabling reliable resume, handoff, and cron-based wakeups without relying on prose instructions. The schema is portable and versioned; the runtime state is local-only and never committed.
 
-### Companion Scripts
+## Companion Scripts
 
 Skills marked with a script in the table above ship a small executable alongside their `SKILL.md`:
 
-- **`run.py` / `audit.py` / `check.py` / `sync.py`** — Python 3 scripts the agent (or you) can run directly to manipulate state, generate reports, or trigger sync. No extra dependencies required; `pyyaml` is optional but recommended.
+- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
-- Each script supports `--dry-run`, `--help`, and prints a human-readable summary. JSON output available where useful (`--format json`).
-- See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough.
+- Each script supports `--help` and prints a human-readable summary. JSON output available where useful (`--format json`). Dry-run mode available on scripts that make changes.
+- See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of the skill's cron behaviour.
+
+---
+
+## Security skills at a glance
+
+Three skills address the documented top security risks for OpenClaw agents:
+
+| Threat | Skill | How |
+|---|---|---|
+| Malicious skill install (36% of ClawHub skills contain injection payloads) | `skill-vetting` | Scans before install — 6 security flags, SAFE / CAUTION / DO NOT INSTALL |
+| Runtime injection from emails, web pages, scraped data | `prompt-injection-guard` | Detects 6 signal types at runtime; blocks on 2+ signals |
+| Agent takes destructive action without confirmation | `dangerous-action-guard` | Pre-execution gate with 5-min expiry window and full audit trail |
 
 ---
 
