@@ -1,9 +1,12 @@
 ---
 name: task-handoff
 description: Gracefully hands off incomplete tasks across agent restarts. Use when work must be paused mid-task.
+stateful: true
 ---
 
 # Task Handoff
+
+State file: `~/.openclaw/skill-state/task-handoff/state.yaml`
 
 ## Pre-Handoff Checklist
 
@@ -11,9 +14,10 @@ description: Gracefully hands off incomplete tasks across agent restarts. Use wh
 - [ ] All changed files are saved
 - [ ] Tests have been run
 - [ ] Handoff document is written
+- [ ] State file is updated
 - [ ] Memory is updated
 
-## Handoff Document Format
+## Writing a Handoff
 
 Save to tasks/handoff-[task-name]-[timestamp].md:
 
@@ -46,9 +50,12 @@ Reason: [why stopping]
 - [anything blocking]
 ```
 
+Then update state: `active_handoff_path` (full path to the file), `task_name`, `reason`, `status: written`, `written_at`, `files_modified`.
+
 ## Picking Up a Handoff
 
-1. Read the handoff document completely before touching any code
-2. Run the tests to confirm current state
-3. Start from 'What's Next' - do not redo completed steps
-4. Delete the handoff file when task is complete
+1. Read state file to get `active_handoff_path`
+2. Read the handoff document completely before touching any code
+3. Run the tests to confirm current state
+4. Start from 'What's Next' — do not redo completed steps
+5. When complete: delete handoff file, update state `status: picked_up`, clear `active_handoff_path`

@@ -1,9 +1,13 @@
 ---
 name: daily-review
 description: End-of-day structured summary and next-session prep. Use at the end of each working day or significant work block.
+cron: "0 18 * * 1-5"
+stateful: true
 ---
 
 # Daily Review
+
+State file: `~/.openclaw/skill-state/daily-review/state.yaml`
 
 ## The Review
 
@@ -50,3 +54,11 @@ Top 3 things to do next session, in order.
 - Update memory/YYYY-MM-DD.md with full review
 - Update MEMORY.md with any durable learnings
 - Update open task files with current progress
+- Update state: `last_review_date` (today's date), `priorities` (Tomorrow list), `status: done`, `last_review_at`
+
+## Cron Wakeup Behavior
+
+On 6pm weekday wakeup:
+- Read state file
+- If `last_review_date` is today: skip (already ran)
+- Otherwise: run the review and update state

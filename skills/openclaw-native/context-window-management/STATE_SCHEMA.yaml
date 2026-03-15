@@ -1,0 +1,7 @@
+version: "1.0"
+fields:
+  last_compacted_at:     { type: datetime, description: "When the last compaction ran" }
+  current_task:          { type: string, description: "Task in progress at compaction time" }
+  strategy_used:         { type: enum, values: [summarize, externalize, clean_restart], description: "Which reduction strategy was applied" }
+  handoff_path:          { type: string, description: "Path to handoff document if clean_restart was used" }
+  context_size_estimate: { type: string, description: "Rough token/size estimate before compaction" }

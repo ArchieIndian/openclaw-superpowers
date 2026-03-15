@@ -1,9 +1,13 @@
 ---
 name: long-running-task-management
 description: Breaks multi-hour tasks into checkpointed stages with resume capability. Use when a task is expected to take more than 30 minutes or multiple sessions.
+cron: "*/15 * * * *"
+stateful: true
 ---
 
 # Long-Running Task Management
+
+State file: `~/.openclaw/skill-state/long-running-task-management/state.yaml`
 
 ## When to Use
 
@@ -11,48 +15,37 @@ description: Breaks multi-hour tasks into checkpointed stages with resume capabi
 - Task will span multiple sessions
 - Task modifies many files across multiple directories
 
-## Task File Format
+## Starting a Task
 
-Create tasks/YYYY-MM-DD-task-name.md:
-
-```
-# Task: [name]
-Created: YYYY-MM-DD HH:MM
-Status: IN_PROGRESS
-
-## Goal
-[one sentence]
-
-## Steps
-[ ] 1. ...
-[ ] 2. ... [CHECKPOINT]
-[ ] 3. ...
-
-## Checkpoint State
-[Updated at each checkpoint]
-
-## Blockers
-[Anything blocking progress]
-```
+1. Write initial state to the state file:
+   - `task_id`: short kebab-case name
+   - `status: in_progress`
+   - `description`: one-sentence goal
+   - `stages`: ordered list with `status: pending` for each
+   - `started_at`: current timestamp
+2. Begin the first stage
 
 ## At Each Checkpoint
 
-1. Complete the step
+1. Complete the stage
 2. Run tests/verification
-3. Update the task file (mark steps done, write checkpoint state)
-4. Update memory/YYYY-MM-DD.md
-5. Commit progress to git if applicable
+3. Update state file: mark stage `status: complete`, write `checkpoint` (what's stable now), write `next_action` (first thing to do on resume), update `last_updated`
+4. Commit progress to git if applicable
 
 ## Resume After Interruption
 
-1. Read the task file
-2. Read Checkpoint State
-3. Read recent memory entries
-4. Continue from the next incomplete step - do NOT start over
+1. Read the state file
+2. Check `status` and `next_action`
+3. Continue from the next `pending` stage — do NOT start over
 
 ## Completion
 
-1. Update task file status to COMPLETE
+1. Update state: `status: complete`, final `checkpoint`
 2. Run full verification
-3. Update memory
-4. Move task file to tasks/completed/
+
+## Cron Wakeup Behavior
+
+On each 15-minute wakeup:
+- Read state file
+- If `status: in_progress` and `last_updated` is stale (>30 min ago): log a checkpoint update to daily memory
+- If `status: complete` or no active task: skip

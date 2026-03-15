@@ -18,7 +18,11 @@ Your agent invokes `create-skill`, writes a new `SKILL.md`, and that behavior is
 
 The agent can encode your preferences as durable skills during normal conversation. You describe what you want. It teaches itself.
 
-This works because OpenClaw runs 24/7 with a persistent extensions directory. New skill files are auto-discovered the moment they're written.
+- It runs **persistently (24/7)**, not just per-session
+- It handles **long-running tasks** across hours, not minutes
+- It has **native cron scheduling** — skills can wake up automatically on a schedule
+- It has its own tool naming conventions
+- It benefits from skills around **task handoff, memory persistence, and agent recovery** that session-based tools don't need
 
 ---
 
@@ -30,9 +34,9 @@ cd ~/.openclaw/extensions/superpowers && ./install.sh
 openclaw gateway restart
 ```
 
-Your agent now has superpowers.
+`install.sh` symlinks skills, creates state directories for stateful skills, and registers cron jobs — everything in one step.
 
----
+That's it. Your agent now has superpowers.
 
 ## Skills Included
 
@@ -52,14 +56,18 @@ Your agent now has superpowers.
 
 ### OpenClaw-Native (6 skills — new, not in superpowers)
 
-| Skill | Purpose |
-|---|---|
-| `long-running-task-management` | Checkpointed stages for multi-hour tasks |
-| `persistent-memory-hygiene` | Keeps memory clean and useful over time |
-| `task-handoff` | Graceful handoff across agent restarts |
-| `agent-self-recovery` | Escapes loops and stuck states |
-| `context-window-management` | Prevents context overflow on long sessions |
-| `daily-review` | End-of-day summary and next-session prep |
+| Skill | Purpose | Cron | Stateful |
+|---|---|---|---|
+| `long-running-task-management` | Breaks multi-hour tasks into checkpointed stages with resume capability | every 15 min | ✓ |
+| `persistent-memory-hygiene` | Keeps OpenClaw's memory store clean, structured, and useful over time | daily 11pm | ✓ |
+| `task-handoff` | Gracefully hands off incomplete tasks across agent restarts | — | ✓ |
+| `agent-self-recovery` | Detects when the agent is stuck in a loop and escapes systematically | — | ✓ |
+| `context-window-management` | Prevents context overflow on long-running OpenClaw sessions | — | ✓ |
+| `daily-review` | End-of-day structured summary and next-session prep | weekdays 6pm | ✓ |
+
+### How State Works
+
+Stateful skills commit a `STATE_SCHEMA.yaml` defining the shape of their runtime data. At install time, `install.sh` creates `~/.openclaw/skill-state/<skill-name>/state.yaml` on your local machine. The agent reads and writes this file during execution — enabling reliable resume, handoff, and cron-based wakeups without relying on prose instructions. The schema is portable and versioned; the runtime state is local-only and never committed.
 
 ### Community
 
