@@ -1,0 +1,12 @@
+version: "1.0"
+fields:
+  loop_type:     { type: string, description: "Named category of the stuck loop (e.g. unclear-error, wrong-approach)" }
+  attempts:      { type: integer, default: 0, description: "Number of recovery attempts made" }
+  last_approach: { type: string, description: "Description of most recently tried approach" }
+  what_trying:   { type: string, description: "The original goal when the loop started" }
+  what_tried:
+    type: list
+    description: "Ordered list of approaches attempted, most recent last"
+    items: { type: string }
+  status:        { type: enum, values: [none, recovering, recovered, escalated], default: none }
+  started_at:    { type: datetime, description: "When the recovery protocol was initiated" }

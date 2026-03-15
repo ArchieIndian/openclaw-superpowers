@@ -1,6 +1,8 @@
 ---
 name: <skill-name>
 description: <One sentence — what it does and when to use it.>
+# cron: "<5-field cron expression>"   # optional: schedule this skill with OpenClaw
+# stateful: true                       # optional: enables STATE_SCHEMA.yaml + runtime state dir
 ---
 
 # <Skill Title>
@@ -32,3 +34,16 @@ description: <One sentence — what it does and when to use it.>
 
 <!-- Optional. Remove this section if not applicable. -->
 - <Persistence, memory, or long-session consideration>
+
+<!-- If stateful: true, create STATE_SCHEMA.yaml alongside this file:
+
+version: "1.0"
+fields:
+  <field_name>:
+    type: <string|enum|list|datetime|boolean|integer>
+    required: <true|false>       # optional, defaults false
+    default: <value>             # optional
+    values: [...]                # only for type: enum
+    items: { type: ... }         # only for type: list
+    description: "..."           # optional annotation
+-->

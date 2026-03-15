@@ -1,0 +1,11 @@
+version: "1.0"
+fields:
+  active_handoff_path: { type: string, description: "Absolute path to the active handoff doc, null if none" }
+  task_name:           { type: string, description: "Name of the task being handed off" }
+  reason:              { type: string, description: "Why the handoff was created" }
+  status:              { type: enum, values: [none, written, picked_up], default: none }
+  written_at:          { type: datetime, description: "When the handoff document was written" }
+  files_modified:
+    type: list
+    description: "Paths of files changed during the task"
+    items: { type: string }

@@ -1,0 +1,9 @@
+version: "1.0"
+fields:
+  last_review_date: { type: string, description: "ISO date string YYYY-MM-DD of last completed review" }
+  priorities:
+    type: list
+    description: "Top 3 priorities from the last review's Tomorrow section"
+    items: { type: string }
+  status:           { type: enum, values: [idle, in_progress, done], default: idle }
+  last_review_at:   { type: datetime, description: "Full ISO 8601 timestamp of last completed review" }
