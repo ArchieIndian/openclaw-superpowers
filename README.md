@@ -42,7 +42,7 @@ That's it. Your agent now has superpowers.
 
 ## Skills Included
 
-### Core (12 skills)
+### Core (15 skills)
 
 Methodology skills that work in any runtime. Adapted from [obra/superpowers](https://github.com/obra/superpowers) plus OpenClaw-specific additions.
 
@@ -60,8 +60,11 @@ Methodology skills that work in any runtime. Adapted from [obra/superpowers](htt
 | `skill-vetting` | Security scanner for ClawHub skills before installing | `vet.sh` |
 | `project-onboarding` | Crawls a new codebase to generate a `PROJECT.md` context file | `onboard.py` |
 | `fact-check-before-trust` | Secondary verification pass for factual claims before acting on them | — |
+| `skill-trigger-tester` | Scores a skill's description against sample prompts to predict trigger reliability | `test.py` |
+| `skill-conflict-detector` | Detects name shadowing and description-overlap conflicts between installed skills | `detect.py` |
+| `skill-portability-checker` | Validates OS/binary dependencies in companion scripts; catches non-portable calls | `check.py` |
 
-### OpenClaw-Native (18 skills)
+### OpenClaw-Native (23 skills)
 
 Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. Not useful in session-based tools.
 
@@ -85,6 +88,11 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `multi-agent-coordinator` | Manages parallel agent fleets: health checks, consistency, handoffs | — | ✓ | `run.py` |
 | `cron-hygiene` | Audits cron skills for session mode waste and token efficiency | Mondays 9am | ✓ | `audit.py` |
 | `channel-context-bridge` | Writes a resumé card at session end for seamless channel switching | — | ✓ | `bridge.py` |
+| `skill-doctor` | Diagnoses silent skill discovery failures — YAML errors, path violations, schema mismatches | — | ✓ | `doctor.py` |
+| `installed-skill-auditor` | Weekly post-install audit of all skills for injection, credentials, and drift | Mondays 9am | ✓ | `audit.py` |
+| `skill-loadout-manager` | Named skill profiles to manage active skill sets and prevent system prompt bloat | — | ✓ | `loadout.py` |
+| `skill-compatibility-checker` | Checks installed skills against the current OpenClaw version for feature compatibility | — | ✓ | `check.py` |
+| `heartbeat-governor` | Enforces per-skill execution budgets for cron skills; auto-pauses runaway skills | every hour | ✓ | `governor.py` |
 
 ### Community (1 skill)
 
@@ -104,7 +112,7 @@ Stateful skills commit a `STATE_SCHEMA.yaml` defining the shape of their runtime
 
 Skills marked with a script in the table above ship a small executable alongside their `SKILL.md`:
 
-- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
+- **Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies required; `pyyaml` is optional but recommended.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
 - Each script supports `--help` and prints a human-readable summary. JSON output available where useful (`--format json`). Dry-run mode available on scripts that make changes.
 - See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of the skill's cron behaviour.
@@ -113,13 +121,15 @@ Skills marked with a script in the table above ship a small executable alongside
 
 ## Security skills at a glance
 
-Three skills address the documented top security risks for OpenClaw agents:
+Five skills address the documented top security risks for OpenClaw agents:
 
 | Threat | Skill | How |
 |---|---|---|
 | Malicious skill install (36% of ClawHub skills contain injection payloads) | `skill-vetting` | Scans before install — 6 security flags, SAFE / CAUTION / DO NOT INSTALL |
 | Runtime injection from emails, web pages, scraped data | `prompt-injection-guard` | Detects 6 signal types at runtime; blocks on 2+ signals |
 | Agent takes destructive action without confirmation | `dangerous-action-guard` | Pre-execution gate with 5-min expiry window and full audit trail |
+| Post-install skill tampering or credential injection | `installed-skill-auditor` | Weekly content-hash drift detection; INJECTION / CREDENTIAL / EXFILTRATION checks |
+| Silent skill loading failures hiding broken skills | `skill-doctor` | 6 diagnostic checks per skill; surfaces every load-time failure before it disappears |
 
 ---
 
@@ -129,6 +139,7 @@ obra/superpowers was built for session-based tools (Claude Code, Cursor, Codex).
 
 - Runs **24/7**, not just per-session
 - Handles tasks that take **hours, not minutes**
+- Has **native cron scheduling** — skills wake up automatically on a schedule
 - Needs skills around **handoff, memory persistence, and self-recovery** that session tools don't require
 
 The OpenClaw-native skills in this repo exist because of that difference.
