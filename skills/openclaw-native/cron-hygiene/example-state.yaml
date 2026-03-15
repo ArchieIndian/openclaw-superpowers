@@ -1,0 +1,34 @@
+# Example runtime state for cron-hygiene
+last_audit_at: "2026-03-16T09:00:07.112000"
+violations:
+  - skill_name: long-running-task-management
+    rule: session_isolation
+    severity: high
+    details: "Runs in main session mode — re-sends ~8,000 tokens/run"
+    detected_at: "2026-03-16T09:00:07.000000"
+    resolved: false
+    est_waste_usd: 8.64
+  - skill_name: persistent-memory-hygiene
+    rule: session_isolation
+    severity: high
+    details: "Runs in main session mode — re-sends ~8,000 tokens/run"
+    detected_at: "2026-03-16T09:00:07.000000"
+    resolved: false
+    est_waste_usd: 0.72
+audit_history:
+  - date: "2026-03-16"
+    crons_audited: 8
+    violations_found: 2
+    est_monthly_waste_usd: 9.36
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Weekly cron (Monday 09:00) runs audit.py:
+#   Cron Hygiene Report — 2026-03-16
+#   ────────────────────────────────────────
+#   8 crons audited | 2 violations | Est. monthly waste: $9.36
+#
+#   HIGH    long-running-task-management: main session mode (~8,000 tokens/run)
+#           Est. waste: ~$8.64/month
+#           Fix: python3 audit.py --fix-session long-running-task-management
+#
+# Fix: python3 audit.py --fix-session long-running-task-management
+#   → "Add sessionMode: isolated to the skill's OpenClaw config entry"
