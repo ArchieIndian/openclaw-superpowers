@@ -1,0 +1,33 @@
+version: "1.0"
+description: Diagnostic scan results and per-skill health ledger.
+fields:
+  last_scan_at:
+    type: datetime
+  skills_scanned:
+    type: integer
+    default: 0
+  fail_count:
+    type: integer
+    default: 0
+  warn_count:
+    type: integer
+    default: 0
+  violations:
+    type: list
+    description: All FAILs and WARNs from the most recent scan
+    items:
+      skill_name:  { type: string }
+      level:       { type: enum, values: [FAIL, WARN] }
+      check:       { type: string }
+      message:     { type: string }
+      fix_hint:    { type: string }
+      detected_at: { type: datetime }
+      resolved:    { type: boolean }
+  scan_history:
+    type: list
+    description: Rolling log of past scans (last 10)
+    items:
+      scanned_at:     { type: datetime }
+      skills_scanned: { type: integer }
+      fail_count:     { type: integer }
+      warn_count:     { type: integer }

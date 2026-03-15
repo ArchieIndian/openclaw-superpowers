@@ -1,0 +1,71 @@
+# Example runtime state for skill-loadout-manager
+active_loadout: coding
+pinned_skills:
+  - dangerous-action-guard
+  - prompt-injection-guard
+  - agent-self-recovery
+loadouts:
+  minimal:
+    name: minimal
+    description: Safety and recovery essentials only
+    skills:
+      - agent-self-recovery
+      - context-window-management
+      - dangerous-action-guard
+      - prompt-injection-guard
+      - task-handoff
+    created_at: "2026-03-10T08:00:00.000000"
+    last_used: null
+  coding:
+    name: coding
+    description: Software development workflow
+    skills:
+      - dangerous-action-guard
+      - skill-doctor
+      - subagent-driven-development
+      - systematic-debugging
+      - test-driven-development
+      - verification-before-completion
+    created_at: "2026-03-10T08:00:00.000000"
+    last_used: "2026-03-15T09:00:00.000000"
+  ops:
+    name: ops
+    description: Operations, monitoring, and cost management
+    skills:
+      - cron-hygiene
+      - installed-skill-auditor
+      - loop-circuit-breaker
+      - secrets-hygiene
+      - spend-circuit-breaker
+      - workspace-integrity-guardian
+    created_at: "2026-03-12T10:00:00.000000"
+    last_used: "2026-03-13T14:00:00.000000"
+switch_history:
+  - switched_at: "2026-03-15T09:00:00.000000"
+    from_loadout: research
+    to_loadout: coding
+    skill_count: 6
+  - switched_at: "2026-03-14T14:30:00.000000"
+    from_loadout: all
+    to_loadout: research
+    skill_count: 5
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 loadout.py --list
+#   Skill Loadouts  (active: coding)
+#   ────────────────────────────────────────
+#     all                     (all installed skills)
+#     minimal            5 skills  Safety and recovery essentials only
+#   ▶ coding             6 skills  Software development workflow
+#     ops                6 skills  Operations, monitoring, and cost management
+#
+# python3 loadout.py --estimate coding
+#   Token estimate for loadout 'coding'
+#   ────────────────────────────────────────
+#     Skills in loadout : 6
+#     Est. tokens       : ~320
+#     All skills total  : ~1,800
+#     Token savings     : ~1,480 (82% reduction)
+#
+# python3 loadout.py --activate ops
+#   ✓ Activated loadout 'ops' (6 skills).
+#     Takes effect on next OpenClaw session start.
