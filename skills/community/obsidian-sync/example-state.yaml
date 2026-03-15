@@ -1,0 +1,44 @@
+# Example runtime state for obsidian-sync
+# Lives at: ~/.openclaw/skill-state/obsidian-sync/state.yaml
+# Managed by: skills/community/obsidian-sync/sync.py
+
+vault_path: "/Users/alice/Documents/MyBrain"
+last_synced_at: "2026-03-14T22:01:08.443210"
+files_synced: 2
+status: synced
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# First-time setup (one command):
+#   python3 sync.py --set-vault ~/Documents/MyBrain
+#   → Saves vault_path to state.yaml
+#
+# Nightly at 22:00 (cron: "0 22 * * *"), OpenClaw runs sync.py.
+# It reads vault_path from state, then:
+#
+#   1. Copies ~/.openclaw/memory/MEMORY.md
+#          → ~/Documents/MyBrain/OpenClaw/Memory.md
+#
+#   2. Copies today's daily note (e.g. 2026-03-14.md)
+#          → ~/Documents/MyBrain/OpenClaw/Daily/2026-03-14.md
+#
+# Output:
+#   Syncing to vault: /Users/alice/Documents/MyBrain
+#   ────────────────────────────────────────
+#     ✓ Synced: MEMORY.md → /Users/alice/Documents/MyBrain/OpenClaw/Memory.md
+#     ✓ Synced: 2026-03-14.md → /Users/alice/Documents/MyBrain/OpenClaw/Daily/2026-03-14.md
+#
+#   2 file(s) synced, 0 already up to date.
+#
+# The Obsidian vault now shows an "OpenClaw" folder with:
+#   OpenClaw/
+#     Memory.md         ← always current
+#     Daily/
+#       2026-03-13.md
+#       2026-03-14.md   ← today
+#
+# Backfill all daily notes (first run):
+#   python3 sync.py --all-daily
+#
+# Preview without copying:
+#   python3 sync.py --dry-run

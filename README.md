@@ -40,38 +40,54 @@ That's it. Your agent now has superpowers.
 
 ## Skills Included
 
-### Core (9 skills — adapted from obra/superpowers)
+### Core (10 skills — adapted from obra/superpowers)
 
-| Skill | Purpose |
-|---|---|
-| `using-superpowers` | Bootstrap — teaches the agent how to find and invoke skills |
-| `brainstorming` | Structured ideation before any implementation |
-| `writing-plans` | Clear, reviewable implementation plans |
-| `executing-plans` | Executes plans step-by-step with verification |
-| `systematic-debugging` | 4-phase root cause process before any fix |
-| `verification-before-completion` | Ensures tasks are done, not just attempted |
-| `test-driven-development` | Red-green-refactor discipline |
-| `subagent-driven-development` | Parallel subagent execution for complex tasks |
-| `create-skill` | **Writes new skills during conversation** |
+| Skill | Purpose | Script |
+|---|---|---|
+| `using-superpowers` | Bootstrap — teaches the agent how to find and invoke skills | — |
+| `brainstorming` | Structured ideation before any implementation | — |
+| `writing-plans` | Clear, reviewable implementation plans | — |
+| `executing-plans` | Executes plans step-by-step with verification | — |
+| `systematic-debugging` | 4-phase root cause process before any fix | — |
+| `verification-before-completion` | Ensures tasks are done, not just attempted | — |
+| `test-driven-development` | Red-green-refactor discipline | — |
+| `subagent-driven-development` | Parallel subagent execution for complex tasks | — |
+| `create-skill` | **Writes new skills during conversation** | — |
+| `skill-vetting` | Security scanner for ClawHub skills before installing | `vet.sh` |
 
-### OpenClaw-Native (6 skills — new, not in superpowers)
+### OpenClaw-Native (10 skills — new, not in superpowers)
 
-| Skill | Purpose | Cron | Stateful |
-|---|---|---|---|
-| `long-running-task-management` | Breaks multi-hour tasks into checkpointed stages with resume capability | every 15 min | ✓ |
-| `persistent-memory-hygiene` | Keeps OpenClaw's memory store clean, structured, and useful over time | daily 11pm | ✓ |
-| `task-handoff` | Gracefully hands off incomplete tasks across agent restarts | — | ✓ |
-| `agent-self-recovery` | Detects when the agent is stuck in a loop and escapes systematically | — | ✓ |
-| `context-window-management` | Prevents context overflow on long-running OpenClaw sessions | — | ✓ |
-| `daily-review` | End-of-day structured summary and next-session prep | weekdays 6pm | ✓ |
+| Skill | Purpose | Cron | Stateful | Script |
+|---|---|---|---|---|
+| `long-running-task-management` | Breaks multi-hour tasks into checkpointed stages with resume | every 15 min | ✓ | — |
+| `persistent-memory-hygiene` | Keeps OpenClaw's memory store clean and useful over time | daily 11pm | ✓ | — |
+| `task-handoff` | Gracefully hands off incomplete tasks across agent restarts | — | ✓ | — |
+| `agent-self-recovery` | Detects when the agent is stuck in a loop and escapes | — | ✓ | — |
+| `context-window-management` | Prevents context overflow on long-running sessions | — | ✓ | — |
+| `daily-review` | End-of-day structured summary and next-session prep | weekdays 6pm | ✓ | — |
+| `morning-briefing` | Daily briefing: priorities, active tasks, pending handoffs | weekdays 7am | ✓ | `run.py` |
+| `secrets-hygiene` | Audits skills for stale credentials and flags orphaned secrets | Mondays 9am | ✓ | `audit.py` |
+| `workflow-orchestration` | Chains skills into resumable named workflows with conditions | — | ✓ | `run.py` |
+| `context-budget-guard` | Proactively estimates context usage and triggers compaction | — | ✓ | `check.py` |
+
+### Community (1 skill)
+
+| Skill | Purpose | Cron | Stateful | Script |
+|---|---|---|---|---|
+| `obsidian-sync` | Syncs OpenClaw memory to an Obsidian vault nightly | daily 10pm | ✓ | `sync.py` |
 
 ### How State Works
 
 Stateful skills commit a `STATE_SCHEMA.yaml` defining the shape of their runtime data. At install time, `install.sh` creates `~/.openclaw/skill-state/<skill-name>/state.yaml` on your local machine. The agent reads and writes this file during execution — enabling reliable resume, handoff, and cron-based wakeups without relying on prose instructions. The schema is portable and versioned; the runtime state is local-only and never committed.
 
-### Community
+### Companion Scripts
 
-Skills written by agents and contributors. Lives in `skills/community/`.
+Skills marked with a script in the table above ship a small executable alongside their `SKILL.md`:
+
+- **`run.py` / `audit.py` / `check.py` / `sync.py`** — Python 3 scripts the agent (or you) can run directly to manipulate state, generate reports, or trigger sync. No extra dependencies required; `pyyaml` is optional but recommended.
+- **`vet.sh`** — Pure bash scanner; runs on any system with grep.
+- Each script supports `--dry-run`, `--help`, and prints a human-readable summary. JSON output available where useful (`--format json`).
+- See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough.
 
 ---
 
