@@ -1,0 +1,39 @@
+version: "1.0"
+description: >
+  Audit trail of dangerous actions: pending, confirmed, rejected, and expired.
+  The pending_action field holds the current awaiting-confirmation action.
+fields:
+  pending_action:
+    type: object
+    description: Action currently awaiting user confirmation
+    properties:
+      description:  { type: string }
+      category:     { type: string }
+      command:      { type: string }
+      scope:        { type: string, description: "What is affected (files, users, systems)" }
+      reversible:   { type: boolean }
+      requested_at: { type: datetime }
+      expires_at:   { type: datetime }
+  audit_trail:
+    type: list
+    description: Full history of all dangerous action requests
+    items:
+      description:   { type: string }
+      category:      { type: string }
+      command:       { type: string }
+      scope:         { type: string }
+      reversible:    { type: boolean }
+      requested_at:  { type: datetime }
+      outcome:       { type: enum, values: [executed, rejected, expired] }
+      confirmed_at:  { type: datetime, description: "Set when outcome=executed" }
+      confirmation:  { type: string,   description: "User's exact confirmation phrase" }
+      rejected_at:   { type: datetime, description: "Set when outcome=rejected" }
+  total_executed:
+    type: integer
+    default: 0
+  total_rejected:
+    type: integer
+    default: 0
+  total_expired:
+    type: integer
+    default: 0
