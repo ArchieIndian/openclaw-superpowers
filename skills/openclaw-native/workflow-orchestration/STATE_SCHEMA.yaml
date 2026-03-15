@@ -1,0 +1,18 @@
+version: "1.0"
+fields:
+  workflow_name:  { type: string, description: "Name of the active workflow" }
+  status:         { type: enum, values: [idle, in_progress, blocked, complete], default: idle }
+  current_step:   { type: integer, default: 1, description: "1-indexed step currently being executed" }
+  total_steps:    { type: integer, description: "Total number of steps in the workflow" }
+  steps:
+    type: list
+    description: "Ordered workflow step definitions"
+    items:
+      index:      { type: integer }
+      skill:      { type: string }
+      instruction: { type: string }
+      on_failure: { type: string, description: "Fallback skill name, optional" }
+      status:     { type: enum, values: [pending, complete, failed, skipped] }
+  blocked_reason: { type: string, description: "Why the workflow is blocked, if applicable" }
+  started_at:     { type: datetime }
+  last_updated:   { type: datetime }
