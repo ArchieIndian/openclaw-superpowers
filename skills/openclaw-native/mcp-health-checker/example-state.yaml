@@ -1,0 +1,86 @@
+# Example runtime state for mcp-health-checker
+last_check_at: "2026-03-16T12:00:08.554000"
+servers:
+  - name: filesystem
+    transport: stdio
+    status: healthy
+    latency_ms: 120
+    last_seen_at: "2026-03-16T12:00:02.000000"
+    tool_count: 11
+    findings: []
+    checked_at: "2026-03-16T12:00:02.000000"
+  - name: github
+    transport: stdio
+    status: healthy
+    latency_ms: 340
+    last_seen_at: "2026-03-16T12:00:04.000000"
+    tool_count: 18
+    findings: []
+    checked_at: "2026-03-16T12:00:04.000000"
+  - name: web-search
+    transport: http
+    status: degraded
+    latency_ms: 4200
+    last_seen_at: "2026-03-16T12:00:08.000000"
+    tool_count: 3
+    findings:
+      - check: LATENCY
+        severity: MEDIUM
+        detail: "Response time 4200ms approaching threshold"
+    checked_at: "2026-03-16T12:00:08.000000"
+  - name: database
+    transport: stdio
+    status: unreachable
+    latency_ms: 0
+    last_seen_at: "2026-03-15T06:00:00.000000"
+    tool_count: 0
+    findings:
+      - check: REACHABLE
+        severity: CRITICAL
+        detail: "Command not found: pg-mcp-server"
+      - check: STALE
+        severity: HIGH
+        detail: "Last successful probe was 30.0h ago (threshold: 24h)"
+    checked_at: "2026-03-16T12:00:08.000000"
+check_history:
+  - checked_at: "2026-03-16T12:00:08.554000"
+    servers_checked: 4
+    healthy: 2
+    degraded: 1
+    unreachable: 1
+  - checked_at: "2026-03-16T06:00:05.000000"
+    servers_checked: 4
+    healthy: 3
+    degraded: 1
+    unreachable: 0
+  - checked_at: "2026-03-16T00:00:04.000000"
+    servers_checked: 4
+    healthy: 4
+    degraded: 0
+    unreachable: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs every 6 hours:  python3 check.py --ping
+#
+#   MCP Health Check — 2026-03-16 12:00
+#   ───────────────────────────────────────────────────────
+#     Config: /Users/you/.openclaw/config/mcp.yaml
+#     4 servers | 2 healthy | 1 degraded | 1 unreachable
+#
+#     + [    HEALTHY] filesystem (stdio) — 120ms
+#
+#     + [    HEALTHY] github (stdio) — 340ms
+#
+#     ! [   DEGRADED] web-search (http) — 4200ms
+#        [MEDIUM] LATENCY: Response time 4200ms approaching threshold
+#
+#     x [UNREACHABLE] database (stdio) — 0ms
+#        [CRITICAL] REACHABLE: Command not found: pg-mcp-server
+#        [HIGH] STALE: Last successful probe was 30.0h ago (threshold: 24h)
+#
+# python3 check.py --history
+#
+#   MCP Health Check History
+#   ──────────────────────────────────────────────────
+#     2026-03-16T12:00  [=====-----] 50% healthy  (2/4)
+#     2026-03-16T06:00  [=======---] 75% healthy  (3/4)
+#     2026-03-16T00:00  [==========] 100% healthy  (4/4)
