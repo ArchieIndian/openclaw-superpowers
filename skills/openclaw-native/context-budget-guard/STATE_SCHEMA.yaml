@@ -1,0 +1,9 @@
+version: "1.0"
+fields:
+  status:            { type: enum, values: [idle, monitoring], default: idle }
+  threshold_pct:     { type: integer, default: 70, description: "Percentage at which to trigger compaction" }
+  session_start:     { type: datetime, description: "When the current monitored session began" }
+  session_end:       { type: datetime, description: "When the last monitored session ended" }
+  compaction_count:  { type: integer, default: 0, description: "Number of compactions triggered this session" }
+  last_compacted_at: { type: datetime, description: "Timestamp of most recent compaction" }
+  strategy_used:     { type: string, description: "Last compaction strategy applied" }

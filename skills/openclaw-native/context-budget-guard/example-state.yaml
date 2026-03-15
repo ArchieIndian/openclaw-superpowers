@@ -1,0 +1,53 @@
+# Example runtime state for context-budget-guard
+# Lives at: ~/.openclaw/skill-state/context-budget-guard/state.yaml
+# Managed by: skills/openclaw-native/context-budget-guard/check.py
+
+session_start: "2026-03-15T09:00:00.000000"
+current_task: "Refactor authentication service into separate module"
+last_compacted_at: "2026-03-14T16:22:41.000000"
+last_checked_at: "2026-03-15T10:34:05.112000"
+strategy_used: summarize
+
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+#
+# Mark session start (do this at the beginning of each new session):
+#   python3 check.py --session-start
+#   → "Session start recorded: 2026-03-15T09:00:00"
+#
+# Record what you're working on:
+#   python3 check.py --task "Refactor auth service"
+#
+# Check budget at any time:
+#   python3 check.py
+#
+# Output (at ~90 minutes into session):
+#
+#   🟡 Context Budget: MEDIUM  (~72.0% used)
+#      Session age:     90 min
+#      Current task:    Refactor authentication service into separate module
+#      Last compacted:  2026-03-14T16:22:41
+#
+#      → Context at medium capacity. Consider summarizing completed work
+#        and cleaning up scratch notes before the window fills.
+#
+# The skill is reactive — the agent calls it proactively.
+# A typical agent prompt might include:
+#   "Every ~30 minutes, run context-budget-guard check.py.
+#    If level is MEDIUM or HIGH, invoke context-window-management."
+#
+# Exit codes for scripting:
+#   0 = LOW    (continue normally)
+#   1 = MEDIUM (prepare for compaction)
+#   2 = HIGH   (compact now)
+#
+# JSON output for agent parsing:
+#   python3 check.py --format json
+#   {
+#     "level": "MEDIUM",
+#     "estimated_pct": 72.0,
+#     "elapsed_minutes": 90.0,
+#     "current_task": "Refactor auth service",
+#     "last_compacted_at": "2026-03-14T16:22:41",
+#     "recommendation": "Context at medium capacity...",
+#     "timestamp": "2026-03-15T10:34:05"
+#   }
