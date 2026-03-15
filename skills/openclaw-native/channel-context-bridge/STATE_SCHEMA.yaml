@@ -1,0 +1,30 @@
+version: "1.0"
+description: >
+  Resumé cards written at session end for cross-channel context continuity.
+  latest.md is always the most recent card; prev-1.md through prev-6.md
+  are the 6 preceding cards.
+fields:
+  latest_card:
+    type: object
+    description: The most recent resumé card
+    properties:
+      topic:        { type: string }
+      decisions:    { type: list, items: { type: string } }
+      open_questions: { type: list, items: { type: string } }
+      next_actions: { type: list, items: { type: string } }
+      critical_context: { type: string }
+      source_channel: { type: string }
+      written_at:   { type: datetime }
+  card_history:
+    type: list
+    description: Last 7 resumé cards (newest first)
+    items:
+      topic:          { type: string }
+      decisions:      { type: list, items: { type: string } }
+      next_actions:   { type: list, items: { type: string } }
+      source_channel: { type: string }
+      written_at:     { type: datetime }
+  auto_inject_hours:
+    type: integer
+    default: 24
+    description: Cards written within this many hours are auto-injected as primers
