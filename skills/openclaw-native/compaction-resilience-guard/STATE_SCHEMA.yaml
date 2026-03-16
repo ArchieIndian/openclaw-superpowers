@@ -1,0 +1,30 @@
+version: "1.0"
+description: Compaction failure tracking, escalation history, and level usage stats.
+fields:
+  last_check_at:
+    type: datetime
+  level_usage:
+    type: object
+    description: How often each fallback level was used
+    fields:
+      l1_normal:        { type: integer, default: 0 }
+      l2_aggressive:    { type: integer, default: 0 }
+      l3_deterministic: { type: integer, default: 0 }
+  failures:
+    type: list
+    description: Recent compaction failures detected
+    items:
+      summary_id:   { type: string }
+      failure_type: { type: enum, values: [empty, inflation, garbled, repetition, stale] }
+      level_used:   { type: integer, description: "1, 2, or 3" }
+      input_tokens: { type: integer }
+      output_tokens: { type: integer }
+      detected_at:  { type: datetime }
+  check_history:
+    type: list
+    description: Rolling log of past checks (last 20)
+    items:
+      checked_at:   { type: datetime }
+      summaries_checked: { type: integer }
+      failures_found:    { type: integer }
+      escalations:       { type: integer }

@@ -1,11 +1,11 @@
 # openclaw-superpowers
 
-**44 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
+**49 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
 
-[![Skills](https://img.shields.io/badge/skills-44-blue)](#skills-included)
+[![Skills](https://img.shields.io/badge/skills-49-blue)](#skills-included)
 [![Security](https://img.shields.io/badge/security_skills-6-green)](#security--guardrails)
-[![Cron](https://img.shields.io/badge/cron_scheduled-12-orange)](#openclaw-native-28-skills)
-[![Scripts](https://img.shields.io/badge/companion_scripts-15-purple)](#companion-scripts)
+[![Cron](https://img.shields.io/badge/cron_scheduled-15-orange)](#openclaw-native-33-skills)
+[![Scripts](https://img.shields.io/badge/companion_scripts-20-purple)](#companion-scripts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 A plug-and-play skill library for [OpenClaw](https://github.com/openclaw/openclaw) — the open-source AI agent runtime. Gives your agent structured thinking, security guardrails, persistent memory, cron scheduling, self-recovery, and the ability to write its own new skills during conversation.
@@ -20,12 +20,13 @@ Built for developers who want their AI agent to run autonomously 24/7, not just 
 
 Most AI agent frameworks give you a chatbot that forgets everything between sessions. OpenClaw is different — it runs persistently, handles multi-hour tasks, and has native cron scheduling. But out of the box, it doesn't know *how* to use those capabilities well.
 
-**openclaw-superpowers bridges that gap.** Install once, and your agent immediately knows how to:
+**openclaw-superpowers bridges that gap.** Install 49 skills in one command, and your agent immediately knows how to:
 
 - **Think before it acts** — brainstorming, planning, and systematic debugging skills prevent the "dive in and break things" failure mode
 - **Protect itself** — 6 security skills detect prompt injection, block dangerous actions, audit installed code, and scan for leaked credentials
 - **Run unattended** — 12 cron-scheduled skills handle memory cleanup, health checks, budget tracking, and community monitoring while you sleep
 - **Recover from failures** — self-recovery, loop-breaking, and task handoff skills keep long-running work alive across crashes and restarts
+- **Never forget** — DAG-based memory compaction, integrity checking, and context scoring ensure the agent preserves critical information even in month-long conversations
 - **Improve itself** — the agent can write new skills during normal conversation using `create-skill`, encoding your preferences as permanent behaviors
 
 ---
@@ -50,7 +51,7 @@ cd ~/.openclaw/extensions/superpowers && ./install.sh
 openclaw gateway restart
 ```
 
-`install.sh` symlinks all 44 skills, creates state directories for stateful skills, and registers cron jobs — everything in one step. That's it. Your agent now has superpowers.
+`install.sh` symlinks all 49 skills, creates state directories for stateful skills, and registers cron jobs — everything in one step. That's it. Your agent now has superpowers.
 
 ---
 
@@ -78,7 +79,7 @@ Methodology skills that work in any AI agent runtime. Adapted from [obra/superpo
 | `skill-conflict-detector` | Detects name shadowing and description-overlap conflicts between installed skills | `detect.py` |
 | `skill-portability-checker` | Validates OS/binary dependencies in companion scripts; catches non-portable calls | `check.py` |
 
-### OpenClaw-Native (28 skills)
+### OpenClaw-Native (33 skills)
 
 Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. These are the skills that make a 24/7 autonomous agent actually work reliably.
 
@@ -112,6 +113,11 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `config-encryption-auditor` | Scans config directories for plaintext API keys, tokens, and world-readable permissions | Sundays 9am | `audit.py` |
 | `tool-description-optimizer` | Scores skill descriptions for trigger quality — clarity, specificity, keyword density — and suggests rewrites | — | `optimize.py` |
 | `mcp-health-checker` | Monitors MCP server connections for health, latency, and availability; detects stale connections | every 6h | `check.py` |
+| `memory-dag-compactor` | Builds hierarchical summary DAGs from MEMORY.md with depth-aware prompts (d0 leaf → d3+ durable) | daily 11pm | `compact.py` |
+| `large-file-interceptor` | Detects oversized files, generates structural exploration summaries, stores compact references | — | `intercept.py` |
+| `context-assembly-scorer` | Scores how well current context represents full conversation; detects blind spots | every 4h | `score.py` |
+| `compaction-resilience-guard` | Monitors compaction for failures; enforces normal → aggressive → deterministic fallback chain | — | `guard.py` |
+| `memory-integrity-checker` | Validates summary DAGs for orphans, circular refs, token inflation, broken lineage | Sundays 3am | `integrity.py` |
 
 ### Community (1 skill)
 
@@ -142,12 +148,12 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 
 | Feature | openclaw-superpowers | obra/superpowers | Custom prompts |
 |---|---|---|---|
-| Skills included | **44** | 8 | 0 |
+| Skills included | **49** | 8 | 0 |
 | Self-modifying (agent writes new skills) | Yes | No | No |
-| Cron scheduling | **12 scheduled skills** | No | No |
+| Cron scheduling | **15 scheduled skills** | No | No |
 | Persistent state across sessions | **YAML state schemas** | No | No |
 | Security guardrails | **6 defense-in-depth skills** | No | No |
-| Companion scripts with CLI | **15 scripts** | No | No |
+| Companion scripts with CLI | **20 scripts** | No | No |
 | Memory graph / knowledge graph | Yes | No | No |
 | MCP server health monitoring | Yes | No | No |
 | API spend tracking & budget enforcement | Yes | No | No |
@@ -169,7 +175,7 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 │   │   │   ├── SKILL.md
 │   │   │   └── TEMPLATE.md
 │   │   └── ...
-│   ├── openclaw-native/         # 28 persistent-runtime skills
+│   ├── openclaw-native/         # 33 persistent-runtime skills
 │   │   ├── memory-graph-builder/
 │   │   │   ├── SKILL.md             # Skill definition + YAML frontmatter
 │   │   │   ├── STATE_SCHEMA.yaml    # State shape (committed, versioned)
@@ -192,7 +198,7 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 
 Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
-- **15 Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies; `pyyaml` is optional but recommended.
+- **20 Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`, `compact.py`, `intercept.py`, `score.py`, `integrity.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies; `pyyaml` is optional but recommended.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
 - Every script supports `--help` and `--format json`. Dry-run mode available on scripts that make changes.
 - See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of cron behaviour.
@@ -228,3 +234,4 @@ Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
 - **[openclaw/openclaw](https://github.com/openclaw/openclaw)** — the open-source AI agent runtime
 - **[obra/superpowers](https://github.com/obra/superpowers)** — Jesse Vincent's skills framework; core skills adapted under MIT license
+- **[OpenLobster](https://github.com/Neirth/OpenLobster)** — inspiration for memory graph, config encryption auditing, tool-description scoring, and MCP health monitoring

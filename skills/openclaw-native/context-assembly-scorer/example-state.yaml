@@ -1,0 +1,74 @@
+# Example runtime state for context-assembly-scorer
+last_score_at: "2026-03-16T16:00:08.000000"
+current_score:
+  overall: 72.3
+  grade: C
+  topic_coverage: 82.0
+  recency_bias: 65.5
+  entity_continuity: 68.0
+  decision_retention: 75.0
+  task_continuity: 70.0
+blind_spots:
+  - type: decision
+    name: "Decided to use Jaccard similarity threshold of 0.7 for deduplication"
+    importance: critical
+    last_seen: "in full memory"
+  - type: entity
+    name: "/skills/openclaw-native/heartbeat-governor/governor.py"
+    importance: high
+    last_seen: "in full memory"
+  - type: task
+    name: "TODO: add --dry-run flag to radar.py before next release"
+    importance: high
+    last_seen: "in full memory"
+  - type: entity
+    name: "https://github.com/Neirth/OpenLobster"
+    importance: medium
+    last_seen: "in full memory"
+score_history:
+  - scored_at: "2026-03-16T16:00:08.000000"
+    overall: 72.3
+    grade: C
+    blind_spot_count: 12
+  - scored_at: "2026-03-16T12:00:05.000000"
+    overall: 85.1
+    grade: B
+    blind_spot_count: 5
+  - scored_at: "2026-03-16T08:00:03.000000"
+    overall: 91.2
+    grade: A
+    blind_spot_count: 2
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs every 4 hours:  python3 score.py --score --verbose
+#
+#   Context Assembly Score — 2026-03-16 16:00
+#   ───────────────────────────────────────────────────────
+#     Overall:              72.3%  Grade: C
+#     Topic coverage:       82.0%  (2x weight)
+#     Recency bias:         65.5%  (1.5x weight)
+#     Entity continuity:    68.0%  (2x weight)
+#     Decision retention:   75.0%  (2x weight)
+#     Task continuity:      70.0%  (1.5x weight)
+#
+#     Memory stats:
+#       Topics: 284 unique | Entities: 47
+#       Decisions: 12 | Tasks: 8
+#     Blind spots: 12
+#
+# python3 score.py --blind-spots
+#
+#   Blind Spots — 12 items missing from context
+#   ───────────────────────────────────────────────────────
+#   !! [CRITICAL] decision: Decided to use Jaccard similarity threshold...
+#   !  [    HIGH]   entity: /skills/openclaw-native/heartbeat-governor/...
+#   !  [    HIGH]     task: TODO: add --dry-run flag to radar.py...
+#
+# python3 score.py --drift
+#
+#   Coverage Drift — 3 data points
+#   ───────────────────────────────────────────────────────
+#   2026-03-16T16:00  [=======---] 72.3% (C)  12 blind spots
+#   2026-03-16T12:00  [=========-] 85.1% (B)  5 blind spots
+#   2026-03-16T08:00  [=========+] 91.2% (A)  2 blind spots
+#
+#   Trend: declining (-12.8%)
