@@ -1,0 +1,45 @@
+version: "1.0"
+description: DAG-based memory summary hierarchy with depth-aware nodes and lineage tracking.
+fields:
+  last_compact_at:
+    type: datetime
+  config:
+    type: object
+    description: Compaction configuration
+    fields:
+      chunk_size:   { type: integer, default: 20 }
+      fanout:       { type: integer, default: 5 }
+      max_depth:    { type: integer, default: 4 }
+      token_budget: { type: integer, default: 8000 }
+  dag_nodes:
+    type: list
+    description: All summary nodes in the DAG
+    items:
+      id:           { type: string, description: "Unique summary ID (e.g. s-001)" }
+      depth:        { type: integer, description: "0=leaf, 1+=condensed" }
+      content:      { type: string, description: "Summary text" }
+      expand_footer: { type: string, description: "What was compressed away" }
+      token_count:  { type: integer }
+      created_at:   { type: datetime }
+      source_type:  { type: enum, values: [entries, summaries] }
+      source_range: { type: string, description: "Entry range or child summary IDs" }
+      is_active:    { type: boolean, description: "Part of current assembled context" }
+  dag_edges:
+    type: list
+    description: Parent-child relationships in the DAG
+    items:
+      parent_id: { type: string }
+      child_id:  { type: string }
+  entry_count:
+    type: integer
+    description: Total MEMORY.md entries tracked
+  compact_history:
+    type: list
+    description: Rolling log of compaction runs (last 20)
+    items:
+      compacted_at:     { type: datetime }
+      entries_processed: { type: integer }
+      leaves_created:   { type: integer }
+      condensations:    { type: integer }
+      max_depth_reached: { type: integer }
+      total_nodes:      { type: integer }
