@@ -1,0 +1,75 @@
+# Example runtime state for expansion-grant-guard
+active_grants:
+  - grant_id: "g-20260316-003"
+    scope: "dag-recall"
+    issued_at: "2026-03-16T10:30:00Z"
+    expires_at: "2026-03-16T11:00:00Z"
+    token_budget: 4000
+    tokens_consumed: 1250
+    status: active
+    issuer: "parent-session"
+  - grant_id: "g-20260316-004"
+    scope: "session-search"
+    issued_at: "2026-03-16T10:45:00Z"
+    expires_at: "2026-03-16T11:15:00Z"
+    token_budget: 2000
+    tokens_consumed: 0
+    status: active
+    issuer: "parent-session"
+total_issued: 12
+total_expired: 6
+total_revoked: 1
+total_exhausted: 3
+total_tokens_granted: 48000
+total_tokens_consumed: 28750
+grant_history:
+  - grant_id: "g-20260316-001"
+    scope: "dag-recall"
+    issued_at: "2026-03-16T09:00:00Z"
+    closed_at: "2026-03-16T09:22:15Z"
+    token_budget: 4000
+    tokens_consumed: 3840
+    final_status: exhausted
+  - grant_id: "g-20260316-002"
+    scope: "context-expand"
+    issued_at: "2026-03-16T09:30:00Z"
+    closed_at: "2026-03-16T10:00:00Z"
+    token_budget: 8000
+    tokens_consumed: 2100
+    final_status: expired
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 guard.py --issue --scope "dag-recall" --budget 4000 --ttl 30
+#
+#   Grant Issued
+#   ─────────────────────────────────────────────
+#     Grant ID:     g-20260316-003
+#     Scope:        dag-recall
+#     Token budget: 4,000
+#     Expires:      2026-03-16T11:00:00Z (in 30 min)
+#     Status:       active
+#
+# python3 guard.py --validate g-20260316-003
+#
+#   ✓ Grant: g-20260316-003
+#     Status:           active
+#     Scope:            dag-recall
+#     Tokens remaining: 2,750 / 4,000
+#     Expires in:       18.5 min
+#
+# python3 guard.py --consume g-20260316-003 --tokens 500
+#
+#   Consumed 500 tokens from g-20260316-003
+#     Remaining: 2,250 / 4,000
+#
+# python3 guard.py --stats
+#
+#   Expansion Grant Statistics
+#   ──────────────────────────────────────────────
+#     Active grants:      2
+#     Total issued:       12
+#     Total expired:      6
+#     Total revoked:      1
+#     Total exhausted:    3
+#     Tokens granted:     48,000
+#     Tokens consumed:    28,750
+#     Utilization:        59.9%
