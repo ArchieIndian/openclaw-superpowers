@@ -1,0 +1,66 @@
+# Example runtime state for large-file-interceptor
+last_scan_at: "2026-03-16T14:30:05.000000"
+token_threshold: 25000
+intercepted_files:
+  - ref_id: ref-001
+    original_path: "/Users/you/project/data/api-response.json"
+    stored_path: "/Users/you/.openclaw/lcm-files/ref-001_a3b2c1d4e5f6.json"
+    file_type: JSON
+    original_tokens: 36307
+    summary_tokens: 180
+    tokens_saved: 36127
+    summary: |
+      Root: object with 3 keys
+        "data": array of 1247 objects
+        "metadata": object (5 keys)
+        "errors": empty array
+      Item keys: id, name, email, created_at, status
+    intercepted_at: "2026-03-16T14:30:03.000000"
+  - ref_id: ref-002
+    original_path: "/Users/you/project/logs/server.log"
+    stored_path: "/Users/you/.openclaw/lcm-files/ref-002_f7e8d9c0b1a2.log"
+    file_type: Log
+    original_tokens: 52800
+    summary_tokens: 220
+    tokens_saved: 52580
+    summary: |
+      Total lines: 8450
+      Time range: 2026-03-15T00:00 → 2026-03-16T14:29
+      Errors: 23, Warnings: 87
+      Unique error patterns: 5
+        ConnectionError: host N.N.N.N port N
+        TimeoutError: request exceeded Nms
+        ValueError: invalid JSON at line N
+    intercepted_at: "2026-03-16T14:30:04.000000"
+total_tokens_saved: 88707
+scan_history:
+  - scanned_at: "2026-03-16T14:30:05.000000"
+    path_scanned: "/Users/you/project"
+    files_checked: 48
+    files_intercepted: 2
+    tokens_saved: 88707
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 intercept.py --scan /Users/you/project
+#
+#   Intercepted: api-response.json (36,307 tokens → 180 tokens)
+#   Reference card:
+#   [FILE REFERENCE: ref-001]
+#   Original: /Users/you/project/data/api-response.json
+#   Size: 145,230 bytes (~36,307 tokens)
+#   Type: JSON — API response payload
+#   ...
+#
+#   Intercepted: server.log (52,800 tokens → 220 tokens)
+#   ...
+#
+#   Scan Complete — 48 files checked, 2 intercepted, ~88,707 tokens saved
+#
+# python3 intercept.py --audit
+#
+#   Context Budget Audit
+#   ──────────────────────────────────────────────
+#     Intercepted files:     2
+#     Original token cost:   ~89,107
+#     Summary token cost:    ~400
+#     Total tokens saved:    ~88,707
+#     Compression ratio:     99%
