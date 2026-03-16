@@ -1,0 +1,65 @@
+# Example runtime state for compaction-resilience-guard
+last_check_at: "2026-03-16T23:05:00.000000"
+level_usage:
+  l1_normal: 42
+  l2_aggressive: 3
+  l3_deterministic: 1
+failures:
+  - summary_id: s-d0-012
+    failure_type: inflation
+    level_used: 2
+    input_tokens: 500
+    output_tokens: 620
+    detected_at: "2026-03-16T23:04:58.000000"
+  - summary_id: s-d1-005
+    failure_type: repetition
+    level_used: 3
+    input_tokens: 800
+    output_tokens: 200
+    detected_at: "2026-03-15T23:05:00.000000"
+check_history:
+  - checked_at: "2026-03-16T23:05:00.000000"
+    summaries_checked: 18
+    failures_found: 1
+    escalations: 1
+  - checked_at: "2026-03-15T23:05:00.000000"
+    summaries_checked: 15
+    failures_found: 1
+    escalations: 1
+  - checked_at: "2026-03-14T23:05:00.000000"
+    summaries_checked: 12
+    failures_found: 0
+    escalations: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 guard.py --check
+#
+#   Compaction Resilience Check — 2026-03-16 23:05
+#   ──────────────────────────────────────────────────
+#     Summaries checked:  18
+#     Failures found:     1
+#     Escalations needed: 1
+#     Status: DEGRADED
+#
+#     ! s-d0-012: inflation (entropy=3.2, 620 tok)
+#
+# python3 guard.py --report
+#
+#   Compaction Resilience Report
+#   ──────────────────────────────────────────────────
+#     Total compactions tracked: 46
+#     L1 Normal:           42 (91%)
+#     L2 Aggressive:        3 (7%)
+#     L3 Deterministic:     1 (2%)
+#
+#     Recent failures: 2
+#       s-d0-012: inflation (L2)
+#       s-d1-005: repetition (L3)
+#
+# python3 guard.py --simulate "$(cat long-text.txt)"
+#
+#   Fallback Chain Simulation
+#   ──────────────────────────────────────────────────
+#     Input:  2500 tokens (10000 chars)
+#     Level used: L1 (l1_normal)
+#     Output: 1000 tokens
+#     Compression: 40%
