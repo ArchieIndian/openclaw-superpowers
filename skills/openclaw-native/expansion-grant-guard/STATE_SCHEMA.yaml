@@ -1,0 +1,38 @@
+version: "1.0"
+description: Grant ledger, consumption tracking, and audit history.
+fields:
+  active_grants:
+    type: list
+    description: Currently active grants
+    items:
+      grant_id:         { type: string }
+      scope:            { type: string }
+      issued_at:        { type: datetime }
+      expires_at:       { type: datetime }
+      token_budget:     { type: integer }
+      tokens_consumed:  { type: integer }
+      status:           { type: enum, values: [active, expired, revoked, exhausted] }
+      issuer:           { type: string }
+  total_issued:
+    type: integer
+  total_expired:
+    type: integer
+  total_revoked:
+    type: integer
+  total_exhausted:
+    type: integer
+  total_tokens_granted:
+    type: integer
+  total_tokens_consumed:
+    type: integer
+  grant_history:
+    type: list
+    description: Rolling log of completed grants (last 50)
+    items:
+      grant_id:         { type: string }
+      scope:            { type: string }
+      issued_at:        { type: datetime }
+      closed_at:        { type: datetime }
+      token_budget:     { type: integer }
+      tokens_consumed:  { type: integer }
+      final_status:     { type: string }
