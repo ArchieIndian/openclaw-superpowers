@@ -1,0 +1,31 @@
+version: "1.0"
+description: Context coverage scores, blind spot tracking, and drift history.
+fields:
+  last_score_at:
+    type: datetime
+  current_score:
+    type: object
+    fields:
+      overall:          { type: float, description: "0-100 coverage percentage" }
+      grade:            { type: string }
+      topic_coverage:   { type: float }
+      recency_bias:     { type: float }
+      entity_continuity: { type: float }
+      decision_retention: { type: float }
+      task_continuity:  { type: float }
+  blind_spots:
+    type: list
+    description: Topics/entities missing from current context
+    items:
+      type:       { type: enum, values: [topic, entity, decision, task] }
+      name:       { type: string }
+      importance: { type: enum, values: [critical, high, medium, low] }
+      last_seen:  { type: string, description: "When this was last in context" }
+  score_history:
+    type: list
+    description: Rolling log of past scores (last 20)
+    items:
+      scored_at:  { type: datetime }
+      overall:    { type: float }
+      grade:      { type: string }
+      blind_spot_count: { type: integer }
