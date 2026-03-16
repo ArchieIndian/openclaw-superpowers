@@ -1,0 +1,56 @@
+# Example runtime state for session-persistence
+last_import_at: "2026-03-16T14:15:03.000000"
+db_path: "/Users/you/.openclaw/lcm-db/messages.db"
+total_messages: 4832
+total_conversations: 23
+conversation_cursors:
+  session-abc123: 342
+  session-def456: 128
+  session-ghi789: 56
+import_history:
+  - imported_at: "2026-03-16T14:15:03.000000"
+    conversations_added: 0
+    messages_added: 18
+    source: default
+  - imported_at: "2026-03-16T14:00:02.000000"
+    conversations_added: 1
+    messages_added: 45
+    source: default
+  - imported_at: "2026-03-16T13:45:01.000000"
+    conversations_added: 0
+    messages_added: 12
+    source: default
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs every 15 min:  python3 persist.py --import
+#
+#   Session Import — 2026-03-16 14:15
+#   ──────────────────────────────────────────────────
+#     Files scanned:        23
+#     Conversations added:  0
+#     Messages imported:    18
+#     Database: /Users/you/.openclaw/lcm-db/messages.db
+#
+# python3 persist.py --search "API migration"
+#
+#   Search: "API migration" — 5 results
+#   ───────────────────────────────────────────────────────
+#     [assistant] 2026-03-14T10:  session-abc1...
+#       "Migrated the API endpoints from v1 to v2..."
+#
+#     [     user] 2026-03-14T09:  session-abc1...
+#       "Let's start the API migration..."
+#
+# python3 persist.py --stats
+#
+#   Session Persistence Stats
+#   ──────────────────────────────────────────────────
+#     Messages:      4,832
+#     Conversations: 23
+#     Database size: 2,340 KB
+#     Date range:    2026-02-01 → 2026-03-16
+#
+#     By role:
+#         user:   1,245
+#     assistant:   2,891
+#       system:     412
+#         tool:     284

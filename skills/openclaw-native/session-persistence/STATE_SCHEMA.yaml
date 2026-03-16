@@ -1,0 +1,23 @@
+version: "1.0"
+description: Session import tracking, database stats, and import history.
+fields:
+  last_import_at:
+    type: datetime
+  db_path:
+    type: string
+    default: "~/.openclaw/lcm-db/messages.db"
+  total_messages:
+    type: integer
+  total_conversations:
+    type: integer
+  conversation_cursors:
+    type: object
+    description: Per-conversation last imported sequence number
+  import_history:
+    type: list
+    description: Rolling log of past imports (last 20)
+    items:
+      imported_at:          { type: datetime }
+      conversations_added:  { type: integer }
+      messages_added:       { type: integer }
+      source:               { type: string }

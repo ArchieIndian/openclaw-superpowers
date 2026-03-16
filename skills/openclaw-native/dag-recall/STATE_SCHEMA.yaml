@@ -1,0 +1,26 @@
+version: "1.0"
+description: Recall query history, cache stats, and expansion tracking.
+fields:
+  last_query:
+    type: string
+    description: Most recent recall query text
+  last_query_at:
+    type: datetime
+  cache_size:
+    type: integer
+    description: Number of cached recall results
+  total_recalls:
+    type: integer
+    description: Lifetime recall count
+  avg_sources_per_recall:
+    type: number
+    description: Average number of DAG nodes cited per recall
+  recall_history:
+    type: list
+    description: Rolling log of recent recalls (last 20)
+    items:
+      query:            { type: string }
+      recalled_at:      { type: datetime }
+      sources_used:     { type: integer }
+      tokens_assembled: { type: integer }
+      cache_hit:        { type: boolean }
