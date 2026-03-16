@@ -1,0 +1,90 @@
+# Example runtime state for memory-dag-compactor
+last_compact_at: "2026-03-16T23:00:12.445000"
+config:
+  chunk_size: 20
+  fanout: 5
+  max_depth: 4
+  token_budget: 8000
+dag_nodes:
+  - id: s-d0-000
+    depth: 0
+    content: |
+      Built memory-graph-builder skill with graph.py companion script;
+      pushed to branch skill/memory-graph-builder; PR #28 merged.
+      Added node/edge extraction from MEMORY.md, Jaccard dedup at 0.7.
+      [Expand for details about: memory-graph-builder, graph.py, Jaccard, PR]
+    expand_footer: "memory-graph-builder, graph.py, Jaccard, PR"
+    token_count: 52
+    created_at: "2026-03-16T23:00:10.000000"
+    source_type: entries
+    source_range: "e-0000, e-0001, e-0002, e-0003, e-0004"
+    is_active: false
+  - id: s-d0-001
+    depth: 0
+    content: |
+      Built config-encryption-auditor with audit.py; scans for 8 API key
+      patterns + 3 token patterns; PR #29 merged. Also built
+      tool-description-optimizer with 5-dimension scoring; PR #30 merged.
+      [Expand for details about: config-encryption-auditor, audit.py, optimizer]
+    expand_footer: "config-encryption-auditor, audit.py, optimizer"
+    token_count: 58
+    created_at: "2026-03-16T23:00:11.000000"
+    source_type: entries
+    source_range: "e-0005, e-0006, e-0007, e-0008, e-0009"
+    is_active: false
+  - id: s-d1-000
+    depth: 1
+    content: |
+      Session: Built 4 OpenLobster-inspired skills (memory-graph-builder,
+      config-encryption-auditor, tool-description-optimizer, mcp-health-checker).
+      All merged via PRs #28-#31. README updated to 44 skills.
+      [Expand for details about: OpenLobster, PRs, README, skills]
+    expand_footer: "OpenLobster, PRs, README, skills"
+    token_count: 44
+    created_at: "2026-03-16T23:00:12.000000"
+    source_type: summaries
+    source_range: "s-d0-000, s-d0-001"
+    is_active: true
+dag_edges:
+  - parent_id: s-d1-000
+    child_id: s-d0-000
+  - parent_id: s-d1-000
+    child_id: s-d0-001
+entry_count: 10
+compact_history:
+  - compacted_at: "2026-03-16T23:00:12.445000"
+    entries_processed: 10
+    leaves_created: 2
+    condensations: 1
+    max_depth_reached: 1
+    total_nodes: 3
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs nightly at 11pm:  python3 compact.py --compact
+#
+#   Memory DAG Compaction — 2026-03-16 23:00
+#   ──────────────────────────────────────────────────
+#     Entries processed:  10
+#     Leaves created:     2
+#     Condensations:      1
+#     Max depth reached:  1
+#     Total DAG nodes:    3
+#
+# python3 compact.py --tree
+#
+#   Memory DAG Tree — 3 nodes, 2 edges
+#   ──────────────────────────────────────────────────
+#   + [d1] s-d1-000  (44 tok)
+#     "Session: Built 4 OpenLobster-inspired skills..."
+#     - [d0] s-d0-000  (52 tok)
+#       "Built memory-graph-builder skill with graph.py..."
+#     - [d0] s-d0-001  (58 tok)
+#       "Built config-encryption-auditor with audit.py..."
+#
+# python3 compact.py --search "encryption"
+#
+#   Search: "encryption" — 2 results
+#   ──────────────────────────────────────────────────
+#   - [d0] s-d0-001  (relevance: 100%)
+#     "Built config-encryption-auditor with audit.py..."
+#   + [d1] s-d1-000  (relevance: 50%)
+#     "Session: Built 4 OpenLobster-inspired skills..."

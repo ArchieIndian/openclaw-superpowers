@@ -1,0 +1,34 @@
+version: "1.0"
+description: Registry of intercepted large files, reference cards, and token savings.
+fields:
+  last_scan_at:
+    type: datetime
+  token_threshold:
+    type: integer
+    default: 25000
+    description: Files exceeding this token count are intercepted
+  intercepted_files:
+    type: list
+    description: All intercepted file references
+    items:
+      ref_id:         { type: string, description: "Reference ID (e.g. ref-001)" }
+      original_path:  { type: string }
+      stored_path:    { type: string, description: "Path in ~/.openclaw/lcm-files/" }
+      file_type:      { type: string, description: "Detected file type" }
+      original_tokens: { type: integer }
+      summary_tokens: { type: integer }
+      tokens_saved:   { type: integer }
+      summary:        { type: string, description: "Structural exploration summary" }
+      intercepted_at: { type: datetime }
+  total_tokens_saved:
+    type: integer
+    description: Cumulative tokens saved by interception
+  scan_history:
+    type: list
+    description: Rolling log of past scans (last 20)
+    items:
+      scanned_at:       { type: datetime }
+      path_scanned:     { type: string }
+      files_checked:    { type: integer }
+      files_intercepted: { type: integer }
+      tokens_saved:     { type: integer }
