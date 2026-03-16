@@ -1,0 +1,71 @@
+# Example runtime state for memory-integrity-checker
+last_check_at: "2026-03-16T03:00:12.000000"
+findings:
+  - check: ORPHAN_NODE
+    severity: HIGH
+    node_id: s-d1-003
+    detail: "Depth 1 node has no parent — should be connected to a d0 parent"
+    auto_fixable: true
+  - check: STALE_ACTIVE
+    severity: MEDIUM
+    node_id: s-d0-002
+    detail: "Active node is 45 days old with no children"
+    auto_fixable: true
+  - check: DUPLICATE_EDGE
+    severity: LOW
+    node_id: "s-d2-001->s-d1-000"
+    detail: "Duplicate edge in DAG"
+    auto_fixable: true
+check_history:
+  - checked_at: "2026-03-16T03:00:12.000000"
+    nodes_checked: 24
+    findings: 3
+    critical: 0
+    high: 1
+    medium: 1
+    low: 1
+  - checked_at: "2026-03-09T03:00:10.000000"
+    nodes_checked: 18
+    findings: 0
+    critical: 0
+    high: 0
+    medium: 0
+    low: 0
+repairs_applied:
+  - repaired_at: "2026-03-16T03:00:12.000000"
+    check: DUPLICATE_EDGE
+    node_id: "s-d2-001->s-d1-000"
+    action: "Removed duplicate edges"
+  - repaired_at: "2026-03-16T03:00:12.000000"
+    check: STALE_ACTIVE
+    node_id: s-d0-002
+    action: "Deactivated stale node s-d0-002"
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs Sundays at 3am:  python3 integrity.py --check --fix
+#
+#   Memory Integrity Check — 2026-03-16 03:00
+#   ───────────────────────────────────────────────────────
+#     Nodes checked: 24 | Edges: 18
+#     Findings: 3 (0 critical, 1 high, 1 medium, 1 low)
+#
+#     !  [    HIGH] ORPHAN_NODE: s-d1-003
+#        Depth 1 node has no parent [auto-fixable]
+#     ~  [  MEDIUM] STALE_ACTIVE: s-d0-002
+#        Active node is 45 days old with no children [auto-fixable]
+#     .  [     LOW] DUPLICATE_EDGE: s-d2-001->s-d1-000
+#        Duplicate edge in DAG [auto-fixable]
+#
+#     Repairs applied: 2
+#       + Removed duplicate edges
+#       + Deactivated stale node s-d0-002
+#
+#     Status: DEGRADED
+#
+# python3 integrity.py --repair-plan
+#
+#   Repair Plan — 3 findings
+#   ───────────────────────────────────────────────────────
+#     Auto-fixable (3):
+#       ORPHAN_NODE on s-d1-003: Depth 1 node has no parent
+#       STALE_ACTIVE on s-d0-002: Active node is 45 days old
+#       DUPLICATE_EDGE on s-d2-001->s-d1-000: Duplicate edge

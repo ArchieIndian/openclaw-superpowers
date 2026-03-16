@@ -1,0 +1,33 @@
+version: "1.0"
+description: DAG integrity check results, findings, and repair history.
+fields:
+  last_check_at:
+    type: datetime
+  findings:
+    type: list
+    description: Integrity issues found in the most recent check
+    items:
+      check:      { type: string, description: "Check name (e.g. ORPHAN_NODE)" }
+      severity:   { type: enum, values: [CRITICAL, HIGH, MEDIUM, LOW] }
+      node_id:    { type: string }
+      detail:     { type: string }
+      auto_fixable: { type: boolean }
+  check_history:
+    type: list
+    description: Rolling log of past checks (last 20)
+    items:
+      checked_at:   { type: datetime }
+      nodes_checked: { type: integer }
+      findings:     { type: integer }
+      critical:     { type: integer }
+      high:         { type: integer }
+      medium:       { type: integer }
+      low:          { type: integer }
+  repairs_applied:
+    type: list
+    description: History of auto-fix actions taken
+    items:
+      repaired_at: { type: datetime }
+      check:       { type: string }
+      node_id:     { type: string }
+      action:      { type: string }
