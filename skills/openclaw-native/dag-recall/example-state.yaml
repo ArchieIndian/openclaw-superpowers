@@ -1,0 +1,62 @@
+# Example runtime state for dag-recall
+last_query: "how did we handle the auth migration"
+last_query_at: "2026-03-16T10:32:15.000000"
+cache_size: 12
+total_recalls: 47
+avg_sources_per_recall: 3.2
+recall_history:
+  - query: "how did we handle the auth migration"
+    recalled_at: "2026-03-16T10:32:15.000000"
+    sources_used: 4
+    tokens_assembled: 1820
+    cache_hit: false
+  - query: "deploy process"
+    recalled_at: "2026-03-16T09:15:03.000000"
+    sources_used: 3
+    tokens_assembled: 1240
+    cache_hit: false
+  - query: "deploy process"
+    recalled_at: "2026-03-16T09:45:22.000000"
+    sources_used: 3
+    tokens_assembled: 1240
+    cache_hit: true
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 recall.py --query "how did we handle the auth migration"
+#
+#   Recall: "how did we handle the auth migration" — 4 sources
+#
+#     [s-d1-003] (summary) Migrated JWT signing from HS256 to RS256
+#       with key rotation plan...
+#     [s-d0-012] (detail) Created migration script for auth_keys table...
+#     [s-d0-015] (detail) Updated environment variables for RS256 public...
+#     [s-d0-018] (detail) Added rollback procedure in deploy/auth-rollback.sh...
+#
+#     Sources:
+#       [s-d1-003] "Migrated JWT signing from HS256 to RS2..." (2026-02-10)
+#       [s-d0-012] "Created migration script for auth_keys..." (2026-02-10)
+#       [s-d0-015] "Updated environment variables for RS25..." (2026-02-11)
+#       [s-d0-018] "Added rollback procedure in deploy/aut..." (2026-02-11)
+#
+# python3 recall.py --trace s-d0-012
+#
+#   Trace: s-d0-012 → root (3 nodes)
+#
+#   s-d0-012 (d0 — detail)
+#       Created migration script for auth_keys table
+#       Created: 2026-02-10
+#     └── s-d1-003 (d1 — summary)
+#         JWT signing migration HS256 → RS256
+#         Created: 2026-02-10
+#       └── s-d2-001 (d2 — arc)
+#           Auth & Infrastructure overhaul Feb 2026
+#           Created: 2026-02-14
+#
+# python3 recall.py --status
+#
+#   DAG Recall Status
+#   ──────────────────────────────────────────────────
+#     Last query:      how did we handle the auth migration
+#     Last query at:   2026-03-16T10:32:15.000000
+#     Total recalls:   47
+#     Cache size:      12 / 50
+#     DAG nodes:       24
