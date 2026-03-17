@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-SKILLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../skills" && pwd)"
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SKILLS_DIR="$REPO_DIR/skills"
 PASS=0; FAIL=0
 for skill_dir in "$SKILLS_DIR"/**/*; do
   if [ -d "$skill_dir" ]; then
@@ -13,14 +16,14 @@ for skill_dir in "$SKILLS_DIR"/**/*; do
     fi
 
     # Check stateful coherence: stateful: true requires STATE_SCHEMA.yaml
-    fm_stateful="$(sed -n '2,/^---$/p' "$skill_dir/SKILL.md" | grep '^stateful:' | sed 's/^stateful: *//' | tr -d '[:space:]')"
+    fm_stateful="$(sed -n '2,/^---$/p' "$skill_dir/SKILL.md" | grep '^stateful:' | sed 's/^stateful: *//' | tr -d '[:space:]' || true)"
     if [ "$fm_stateful" = "true" ] && [ ! -f "$skill_dir/STATE_SCHEMA.yaml" ]; then
       echo "FAIL: $skill_name stateful: true but STATE_SCHEMA.yaml missing"; FAIL=$((FAIL+1))
       continue
     fi
 
     # Check cron format if present
-    fm_cron="$(sed -n '2,/^---$/p' "$skill_dir/SKILL.md" | grep '^cron:' | sed 's/^cron: *//' | tr -d '"'"'")"
+    fm_cron="$(sed -n '2,/^---$/p' "$skill_dir/SKILL.md" | grep '^cron:' | sed 's/^cron: *//' | tr -d '"'"'" || true)"
     if [ -n "$fm_cron" ]; then
       if ! echo "$fm_cron" | grep -qE '^[0-9*/,\-]+ [0-9*/,\-]+ [0-9*/,\-]+ [0-9*/,\-]+ [0-9*/,\-]+$'; then
         echo "FAIL: $skill_name invalid cron expression '$fm_cron'"; FAIL=$((FAIL+1))
@@ -36,5 +39,6 @@ for skill_dir in "$SKILLS_DIR"/**/*; do
     echo "PASS: $label"; PASS=$((PASS+1))
   fi
 done
+"$REPO_DIR/scripts/check-readme-metrics.sh"
 echo "Results: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ]

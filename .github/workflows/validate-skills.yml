@@ -4,6 +4,12 @@ on:
   pull_request:
     paths:
       - 'skills/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'install.sh'
+      - 'uninstall.sh'
+      - 'README.md'
+      - '.github/workflows/**'
 
 jobs:
   validate:
@@ -13,3 +19,9 @@ jobs:
 
       - name: Validate skill structure
         run: ./scripts/validate-skills.sh
+
+      - name: Check README metrics
+        run: ./scripts/check-readme-metrics.sh
+
+      - name: Run repository smoke tests
+        run: bash ./tests/test-runner.sh
