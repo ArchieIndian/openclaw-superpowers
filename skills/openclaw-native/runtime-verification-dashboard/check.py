@@ -11,6 +11,8 @@ Usage:
     python3 check.py --scan
     python3 check.py --scan --failures
     python3 check.py --scan --skill morning-briefing
+    python3 check.py --remediate
+    python3 check.py --remediate --apply
     python3 check.py --status
     python3 check.py --findings
     python3 check.py --format json
@@ -49,11 +51,13 @@ MAX_HISTORY = 20
 def default_state() -> dict:
     return {
         "last_scan_at": "",
+        "last_remediation_at": "",
         "summary": {},
         "environment": {},
         "global_findings": [],
         "skills": [],
         "scan_history": [],
+        "remediation_history": [],
     }
 
 
@@ -150,6 +154,27 @@ def get_registered_crons() -> tuple[list[str] | None, str]:
         return None, f"openclaw cron list failed: {detail}"
 
     return [line.strip() for line in proc.stdout.splitlines() if line.strip()], ""
+
+
+def run_openclaw_cron(args: list[str]) -> tuple[bool, str]:
+    if shutil.which("openclaw") is None:
+        return False, "openclaw CLI not found"
+
+    try:
+        proc = subprocess.run(
+            ["openclaw", "cron"] + args,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+    except Exception as exc:
+        return False, str(exc)
+
+    if proc.returncode != 0:
+        detail = proc.stderr.strip() or proc.stdout.strip() or "unknown error"
+        return False, detail
+    return True, proc.stdout.strip()
 
 
 def interval_minutes(cron_expr: str) -> int:
@@ -375,8 +400,77 @@ def update_state(report: dict) -> dict:
         },
     )
     report["scan_history"] = history[:MAX_HISTORY]
+    report["last_remediation_at"] = state.get("last_remediation_at", "")
+    report["remediation_history"] = state.get("remediation_history", [])
     save_state(report)
     return report
+
+
+def record_remediation(actions: list[dict]) -> None:
+    state = load_state()
+    history = state.get("remediation_history") or []
+    timestamp = datetime.now().isoformat()
+    history.insert(
+        0,
+        {
+            "remediated_at": timestamp,
+            "action_count": len(actions),
+            "applied_count": sum(1 for item in actions if item["outcome"] == "applied"),
+            "actions": actions,
+        },
+    )
+    state["last_remediation_at"] = timestamp
+    state["remediation_history"] = history[:MAX_HISTORY]
+    save_state(state)
+
+
+def remediate(report: dict, apply: bool) -> list[dict]:
+    actions = []
+    dry_run = not apply
+
+    for skill in report.get("skills", []):
+        for finding in skill.get("findings", []):
+            if finding["check"] == "STATE_MISSING":
+                state_file = Path(skill["state_file"])
+                action = {
+                    "skill": skill["name"],
+                    "check": finding["check"],
+                    "action": f"create {state_file}",
+                    "outcome": "planned" if dry_run else "applied",
+                    "detail": "",
+                }
+                if dry_run:
+                    action["detail"] = "Would create the skill-state directory and stub state.yaml."
+                else:
+                    state_file.parent.mkdir(parents=True, exist_ok=True)
+                    if not state_file.exists():
+                        state_file.write_text(
+                            f"# Runtime state for {skill['name']} - managed by openclaw-superpowers\n"
+                        )
+                    action["detail"] = "Created missing state stub."
+                actions.append(action)
+
+            if finding["check"] == "CRON_NOT_REGISTERED" and skill.get("cron"):
+                action = {
+                    "skill": skill["name"],
+                    "check": finding["check"],
+                    "action": f"register cron {skill['cron']}",
+                    "outcome": "planned" if dry_run else "applied",
+                    "detail": "",
+                }
+                if dry_run:
+                    action["detail"] = "Would run `openclaw cron remove` then `openclaw cron add`."
+                else:
+                    removed, remove_detail = run_openclaw_cron(["remove", skill["name"]])
+                    added, add_detail = run_openclaw_cron(["add", skill["name"], skill["cron"]])
+                    if not added:
+                        action["outcome"] = "failed"
+                        action["detail"] = add_detail
+                    else:
+                        action["detail"] = add_detail or remove_detail or "Cron entry registered."
+                actions.append(action)
+
+    return actions
 
 
 def filter_report(report: dict, skill_name: str | None, failures_only: bool) -> dict:
@@ -457,21 +551,59 @@ def print_status(report: dict) -> None:
                 f"  {entry['scanned_at'][:19]}  "
                 f"P:{entry['pass_count']} W:{entry['warn_count']} F:{entry['fail_count']}"
             )
+    remediations = report.get("remediation_history", [])
+    if remediations:
+        print("\nRecent remediations")
+        print("───────────────────────────────────────────────────────")
+        for entry in remediations[:5]:
+            print(
+                f"  {entry['remediated_at'][:19]}  "
+                f"actions:{entry['action_count']} applied:{entry['applied_count']}"
+            )
+
+
+def print_remediation(actions: list[dict], apply: bool) -> None:
+    mode = "Apply" if apply else "Dry run"
+    print(f"\nRuntime remediation ({mode})")
+    print("───────────────────────────────────────────────────────")
+    if not actions:
+        print("  No fixable findings in the current scan.")
+        return
+    for action in actions:
+        print(f"  {action['outcome'].upper():7} {action['skill']}  {action['check']}")
+        print(f"          {action['action']}")
+        if action["detail"]:
+            print(f"          {action['detail']}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Runtime verification and observability for skills")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--scan", action="store_true", help="Run a live runtime scan")
+    group.add_argument("--remediate", action="store_true", help="Plan or apply safe remediations")
     group.add_argument("--status", action="store_true", help="Show summary from the last scan")
     group.add_argument("--findings", action="store_true", help="Show findings from the last scan")
     parser.add_argument("--skill", metavar="NAME", help="Limit output to a single skill")
     parser.add_argument("--failures", action="store_true", help="Only show WARN / FAIL items")
+    parser.add_argument("--apply", action="store_true", help="Apply remediations instead of dry-run planning")
     parser.add_argument("--format", choices=["human", "json"], default="human")
     args = parser.parse_args()
 
     if args.scan:
         report = update_state(scan(args.skill))
+    elif args.remediate:
+        report = update_state(scan(args.skill))
+        actions = remediate(report, args.apply)
+        if args.apply:
+            record_remediation(actions)
+            report = update_state(scan(args.skill))
+        if args.format == "json":
+            print(json.dumps({"report": report, "actions": actions}, indent=2))
+            return
+        print_summary(report)
+        print_findings(filter_report(report, args.skill, args.failures), args.skill)
+        print_remediation(actions, args.apply)
+        return
     else:
         report = load_state()
 

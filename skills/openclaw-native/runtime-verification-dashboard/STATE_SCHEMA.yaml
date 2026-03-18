@@ -3,6 +3,8 @@ description: Runtime verification summary, per-skill health ledger, and rolling 
 fields:
   last_scan_at:
     type: datetime
+  last_remediation_at:
+    type: datetime
   summary:
     type: object
     items:
@@ -54,4 +56,18 @@ fields:
       pass_count:          { type: integer }
       warn_count:          { type: integer }
       fail_count:          { type: integer }
-      global_finding_count:{ type: integer }
+      global_finding_count: { type: integer }
+  remediation_history:
+    type: list
+    items:
+      remediated_at: { type: datetime }
+      action_count:  { type: integer }
+      applied_count: { type: integer }
+      actions:
+        type: list
+        items:
+          skill:   { type: string }
+          check:   { type: string }
+          action:  { type: string }
+          outcome: { type: enum, values: [planned, applied, failed] }
+          detail:  { type: string }

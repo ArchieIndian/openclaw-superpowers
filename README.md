@@ -110,7 +110,7 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `installed-skill-auditor` | Weekly post-install audit of all skills for injection, credentials, and drift | Mondays 9am | `audit.py` |
 | `skill-loadout-manager` | Named skill profiles to manage active skill sets and prevent system prompt bloat | — | `loadout.py` |
 | `skill-compatibility-checker` | Checks installed skills against the current OpenClaw version for feature compatibility | — | `check.py` |
-| `runtime-verification-dashboard` | Verifies cron registration, state freshness, install layout, and dependency readiness across the live runtime | every 6h | `check.py` |
+| `runtime-verification-dashboard` | Verifies cron registration, state freshness, install layout, and dependency readiness across the live runtime; can dry-run or apply safe remediations | every 6h | `check.py` |
 | `heartbeat-governor` | Enforces per-skill execution budgets for cron skills; auto-pauses runaway skills | every hour | `governor.py` |
 | `community-skill-radar` | Scans Reddit for OpenClaw pain points and feature requests; writes prioritized PROPOSALS.md | every 3 days | `radar.py` |
 | `memory-graph-builder` | Parses MEMORY.md into a knowledge graph; detects duplicates, contradictions, stale entries | daily 10pm | `graph.py` |

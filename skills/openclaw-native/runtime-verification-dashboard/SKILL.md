@@ -38,6 +38,8 @@ It catches the gap between "the files exist" and "the runtime is healthy."
 python3 check.py --scan                 # Full live runtime audit
 python3 check.py --scan --failures      # Show only WARN / FAIL items
 python3 check.py --scan --skill morning-briefing
+python3 check.py --remediate            # Dry-run safe remediations
+python3 check.py --remediate --apply    # Apply safe remediations
 python3 check.py --status               # Summary from the last scan
 python3 check.py --findings             # Findings from the last scan
 python3 check.py --format json
@@ -53,6 +55,15 @@ Every 6 hours:
 4. Write a summary ledger and rolling history to state
 5. Surface FAILs first, then WARNs
 
+## Safe remediations
+
+Remediation is dry-run by default. The dashboard only auto-fixes deterministic runtime issues:
+
+- `STATE_MISSING` → create the missing `state.yaml` stub
+- `CRON_NOT_REGISTERED` → re-register the cron entry through the OpenClaw CLI
+
+Everything else remains advisory. Missing dependencies, invalid frontmatter, and install-layout issues still require a human decision.
+
 ## Operating rule
 
 Use this skill as the first stop when the agent's behaviour looks inconsistent with the skill files on disk. It tells you whether the problem is registration, state drift, dependency drift, or install layout drift.
@@ -61,4 +72,4 @@ Use this skill as the first stop when the agent's behaviour looks inconsistent w
 
 State file: `~/.openclaw/skill-state/runtime-verification-dashboard/state.yaml`
 
-Fields: `last_scan_at`, `summary`, `environment`, `global_findings`, `skills`, `scan_history`.
+Fields: `last_scan_at`, `last_remediation_at`, `summary`, `environment`, `global_findings`, `skills`, `scan_history`, `remediation_history`.
