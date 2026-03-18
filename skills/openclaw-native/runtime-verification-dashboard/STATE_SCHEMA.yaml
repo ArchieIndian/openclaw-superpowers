@@ -1,0 +1,57 @@
+version: "1.0"
+description: Runtime verification summary, per-skill health ledger, and rolling scan history.
+fields:
+  last_scan_at:
+    type: datetime
+  summary:
+    type: object
+    items:
+      total_skills:         { type: integer, default: 0 }
+      pass_count:           { type: integer, default: 0 }
+      warn_count:           { type: integer, default: 0 }
+      fail_count:           { type: integer, default: 0 }
+      stateful_count:       { type: integer, default: 0 }
+      scheduled_count:      { type: integer, default: 0 }
+      companion_script_count: { type: integer, default: 0 }
+  environment:
+    type: object
+    items:
+      openclaw_home:      { type: string }
+      superpowers_dir:    { type: string }
+      skills_root:        { type: string }
+      openclaw_cli_found: { type: boolean }
+      pyyaml_found:       { type: boolean }
+      cron_registry_ok:   { type: boolean }
+  global_findings:
+    type: list
+    items:
+      level:          { type: enum, values: [WARN, FAIL] }
+      check:          { type: string }
+      detail:         { type: string }
+      recommendation: { type: string }
+  skills:
+    type: list
+    items:
+      name:              { type: string }
+      category:          { type: string }
+      status:            { type: enum, values: [PASS, WARN, FAIL] }
+      stateful:          { type: boolean }
+      cron:              { type: string }
+      state_file:        { type: string }
+      companion_scripts: { type: list, items: { type: string } }
+      findings:
+        type: list
+        items:
+          level:          { type: enum, values: [WARN, FAIL] }
+          check:          { type: string }
+          detail:         { type: string }
+          recommendation: { type: string }
+  scan_history:
+    type: list
+    items:
+      scanned_at:          { type: datetime }
+      total_skills:        { type: integer }
+      pass_count:          { type: integer }
+      warn_count:          { type: integer }
+      fail_count:          { type: integer }
+      global_finding_count:{ type: integer }

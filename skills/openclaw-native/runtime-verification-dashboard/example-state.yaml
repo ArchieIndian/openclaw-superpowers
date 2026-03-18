@@ -1,0 +1,92 @@
+# Example runtime state for runtime-verification-dashboard
+last_scan_at: "2026-03-18T12:00:08.000000"
+summary:
+  total_skills: 53
+  pass_count: 48
+  warn_count: 4
+  fail_count: 1
+  stateful_count: 39
+  scheduled_count: 20
+  companion_script_count: 37
+environment:
+  openclaw_home: "/Users/you/.openclaw"
+  superpowers_dir: "/Users/you/.openclaw/extensions/superpowers"
+  skills_root: "/Users/you/.openclaw/extensions/superpowers"
+  openclaw_cli_found: true
+  pyyaml_found: true
+  cron_registry_ok: true
+global_findings:
+  - level: WARN
+    check: INSTALL_LAYOUT
+    detail: "Detected skills-root install layout; scripts must not assume a nested /skills directory."
+    recommendation: "Use path resolution that accepts both repo-root and installed-extension layouts."
+skills:
+  - name: morning-briefing
+    category: openclaw-native
+    status: PASS
+    stateful: true
+    cron: "0 7 * * 1-5"
+    state_file: "/Users/you/.openclaw/skill-state/morning-briefing/state.yaml"
+    companion_scripts:
+      - run.py
+    findings: []
+  - name: session-persistence
+    category: openclaw-native
+    status: WARN
+    stateful: true
+    cron: "*/15 * * * *"
+    state_file: "/Users/you/.openclaw/skill-state/session-persistence/state.yaml"
+    companion_scripts:
+      - persist.py
+    findings:
+      - level: WARN
+        check: STATE_STALE
+        detail: "State file is 132 minutes old, above the 45-minute freshness budget."
+        recommendation: "Inspect the cron logs and rerun `python3 persist.py --import`."
+  - name: daily-review
+    category: openclaw-native
+    status: FAIL
+    stateful: true
+    cron: "0 18 * * 1-5"
+    state_file: "/Users/you/.openclaw/skill-state/daily-review/state.yaml"
+    companion_scripts: []
+    findings:
+      - level: FAIL
+        check: CRON_NOT_REGISTERED
+        detail: "Skill is scheduled in frontmatter but was not found in `openclaw cron list`."
+        recommendation: "Re-run ./install.sh or register the cron entry manually."
+scan_history:
+  - scanned_at: "2026-03-18T12:00:08.000000"
+    total_skills: 53
+    pass_count: 48
+    warn_count: 4
+    fail_count: 1
+    global_finding_count: 1
+  - scanned_at: "2026-03-18T06:00:05.000000"
+    total_skills: 53
+    pass_count: 50
+    warn_count: 3
+    fail_count: 0
+    global_finding_count: 1
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs every 6 hours:  python3 check.py --scan
+#
+#   Runtime Verification Dashboard
+#   ───────────────────────────────────────────────────────
+#     Skills: 53 total | 48 PASS | 4 WARN | 1 FAIL
+#     Stateful: 39 | Scheduled: 20 | Companion scripts: 37
+#     Skills root: /Users/you/.openclaw/extensions/superpowers
+#
+#     WARN  INSTALL_LAYOUT
+#       Detected skills-root install layout; scripts must not assume a nested /skills directory.
+#
+#     FAIL  daily-review
+#       CRON_NOT_REGISTERED: Skill is scheduled in frontmatter but was not found in `openclaw cron list`.
+#
+# python3 check.py --findings
+#
+#   Runtime Findings
+#   ───────────────────────────────────────────────────────
+#   FAIL  daily-review           CRON_NOT_REGISTERED
+#   WARN  session-persistence    STATE_STALE
+#   WARN  system                 INSTALL_LAYOUT
