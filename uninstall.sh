@@ -19,8 +19,14 @@ for skill_file in "$REPO_DIR/skills/openclaw-native"/*/SKILL.md; do
 done
 
 # --- Remove symlink ---
-if [ -L "$INSTALL_TARGET" ] || [ -d "$INSTALL_TARGET" ]; then
-  rm -rf "$INSTALL_TARGET"
+if [ -e "$INSTALL_TARGET" ] && [ ! -L "$INSTALL_TARGET" ]; then
+  echo "Refusing to remove non-symlink path at $INSTALL_TARGET"
+  echo "Remove it manually if this is an old checkout or custom install."
+  exit 1
+fi
+
+if [ -L "$INSTALL_TARGET" ]; then
+  rm -f "$INSTALL_TARGET"
   echo "openclaw-superpowers removed."
 else
   echo "Nothing to uninstall."

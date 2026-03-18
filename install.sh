@@ -14,8 +14,23 @@ fi
 
 # --- Symlink ---
 mkdir -p "$OPENCLAW_DIR/extensions"
-rm -rf "$INSTALL_TARGET"
+if [ -e "$INSTALL_TARGET" ] && [ ! -L "$INSTALL_TARGET" ]; then
+  echo "Refusing to replace non-symlink path at $INSTALL_TARGET"
+  if [ "$REPO_DIR" = "$INSTALL_TARGET" ]; then
+    echo "This repository is checked out inside the extensions directory."
+    echo "Clone it somewhere else (for example: $OPENCLAW_DIR/src/openclaw-superpowers) and rerun ./install.sh."
+  else
+    echo "Remove or move the existing directory manually, then rerun ./install.sh."
+  fi
+  exit 1
+fi
+rm -f "$INSTALL_TARGET"
 ln -s "$REPO_DIR/skills" "$INSTALL_TARGET"
+
+if ! python3 -c "import yaml" >/dev/null 2>&1; then
+  echo "WARN: PyYAML is not installed. Stateful Python helpers can read less and may not persist updates correctly."
+  echo "      Install it with: python3 -m pip install PyYAML"
+fi
 
 # --- Helper: register a stateful skill (create state dir + empty stub) ---
 register_stateful_skill() {
