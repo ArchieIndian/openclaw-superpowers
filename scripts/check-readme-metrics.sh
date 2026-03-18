@@ -4,9 +4,9 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 README="$REPO_DIR/README.md"
 
-SKILL_COUNT="$(git -C "$REPO_DIR" ls-files 'skills/*/*/SKILL.md' | wc -l | tr -d '[:space:]')"
-CRON_COUNT="$(git -C "$REPO_DIR" grep -l '^cron:' -- 'skills/*/*/SKILL.md' | wc -l | tr -d '[:space:]')"
-PYTHON_SCRIPT_COUNT="$(git -C "$REPO_DIR" ls-files 'skills/**/*.py' | wc -l | tr -d '[:space:]')"
+SKILL_COUNT="$(find "$REPO_DIR/skills" -type f -name 'SKILL.md' | wc -l | tr -d '[:space:]')"
+CRON_COUNT="$(find "$REPO_DIR/skills" -type f -name 'SKILL.md' -print0 | xargs -0 grep -l '^cron:' | wc -l | tr -d '[:space:]')"
+PYTHON_SCRIPT_COUNT="$(find "$REPO_DIR/skills" -type f -name '*.py' | wc -l | tr -d '[:space:]')"
 COMPANION_SCRIPT_COUNT=$((PYTHON_SCRIPT_COUNT + 1))
 
 assert_contains() {
