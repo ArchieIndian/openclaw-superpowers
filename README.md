@@ -1,11 +1,11 @@
 # openclaw-superpowers
 
-**58 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
+**59 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
 
-[![Skills](https://img.shields.io/badge/skills-58-blue)](#skills-included)
+[![Skills](https://img.shields.io/badge/skills-59-blue)](#skills-included)
 [![Security](https://img.shields.io/badge/security_skills-6-green)](#security--guardrails)
-[![Cron](https://img.shields.io/badge/cron_scheduled-21-orange)](#openclaw-native-39-skills)
-[![Scripts](https://img.shields.io/badge/companion_scripts-42-purple)](#companion-scripts)
+[![Cron](https://img.shields.io/badge/cron_scheduled-22-orange)](#openclaw-native-43-skills)
+[![Scripts](https://img.shields.io/badge/companion_scripts-43-purple)](#companion-scripts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 A plug-and-play skill library for [OpenClaw](https://github.com/openclaw/openclaw) — the open-source AI agent runtime. Gives your agent structured thinking, security guardrails, persistent memory, cron scheduling, deployment preflight, runtime verification, self-recovery, and the ability to write its own new skills during conversation.
@@ -20,11 +20,11 @@ Built for developers who want their AI agent to run autonomously 24/7, not just 
 
 Most AI agent frameworks give you a chatbot that forgets everything between sessions. OpenClaw is different — it runs persistently, handles multi-hour tasks, and has native cron scheduling. But out of the box, it doesn't know *how* to use those capabilities well.
 
-**openclaw-superpowers bridges that gap.** Install 58 skills in one command, and your agent immediately knows how to:
+**openclaw-superpowers bridges that gap.** Install 59 skills in one command, and your agent immediately knows how to:
 
 - **Think before it acts** — brainstorming, planning, and systematic debugging skills prevent the "dive in and break things" failure mode
 - **Protect itself** — 6 security skills detect prompt injection, block dangerous actions, audit installed code, and scan for leaked credentials
-- **Run unattended** — 21 cron-scheduled skills handle memory cleanup, health checks, budget tracking, and community monitoring while you sleep
+- **Run unattended** — 22 cron-scheduled skills handle memory cleanup, health checks, budget tracking, and community monitoring while you sleep
 - **Prove delivery** — cron execution proofs distinguish "the job fired" from "the user actually got the output"
 - **Scale delegation safely** — subagent capability auditing catches missing spawn tools, unsafe depth settings, and bloated fleet definitions before they burn time and tokens
 - **Rollback cleanly** — upgrade rollback snapshots preserve configs and restore instructions before runtime changes become irreversible
@@ -86,7 +86,7 @@ Methodology skills that work in any AI agent runtime. Adapted from [obra/superpo
 | `skill-conflict-detector` | Detects name shadowing and description-overlap conflicts between installed skills | `detect.py` |
 | `skill-portability-checker` | Validates OS/binary dependencies in companion scripts; catches non-portable calls | `check.py` |
 
-### OpenClaw-Native (42 skills)
+### OpenClaw-Native (43 skills)
 
 Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. These are the skills that make a 24/7 autonomous agent actually work reliably.
 
@@ -115,6 +115,7 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `deployment-preflight` | Validates deployment safety before install, upgrade, or unattended use — workspace visibility, persistent mounts, gateway exposure, and runtime paths | — | `check.py` |
 | `session-reset-recovery` | Checkpoints active work before the overnight reset window and restores a concise resume brief after restart | daily 3:45am | `recover.py` |
 | `cron-execution-prover` | Wraps scheduled workflows with proof records — start, finish, evidence, and stale-run detection | — | `prove.py` |
+| `message-delivery-verifier` | Tracks outbound notification delivery across channels so sent, acknowledged, failed, and stale messages are explicit | every 15 min | `verify.py` |
 | `subagent-capability-auditor` | Audits subagent configuration for spawn depth, tool exposure, and fleet shape before multi-agent work begins | — | `audit.py` |
 | `upgrade-rollback-manager` | Snapshots config and state before upgrades and writes rollback instructions tied to the previous runtime version | — | `manage.py` |
 | `skill-loadout-manager` | Named skill profiles to manage active skill sets and prevent system prompt bloat | — | `loadout.py` |
@@ -164,12 +165,12 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 
 | Feature | openclaw-superpowers | obra/superpowers | Custom prompts |
 |---|---|---|---|
-| Skills included | **58** | 8 | 0 |
+| Skills included | **59** | 8 | 0 |
 | Self-modifying (agent writes new skills) | Yes | No | No |
-| Cron scheduling | **21 scheduled skills** | No | No |
+| Cron scheduling | **22 scheduled skills** | No | No |
 | Persistent state across sessions | **YAML state schemas** | No | No |
 | Security guardrails | **6 defense-in-depth skills** | No | No |
-| Companion scripts with CLI | **42 scripts** | No | No |
+| Companion scripts with CLI | **43 scripts** | No | No |
 | Upgrade rollback planning | Yes | No | No |
 | Deployment preflight / Docker safety | Yes | No | No |
 | Memory graph / knowledge graph | Yes | No | No |
@@ -196,7 +197,7 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 │   │   │   ├── SKILL.md
 │   │   │   └── TEMPLATE.md
 │   │   └── ...
-│   ├── openclaw-native/         # 42 persistent-runtime skills
+│   ├── openclaw-native/         # 43 persistent-runtime skills
 │   │   ├── memory-graph-builder/
 │   │   │   ├── SKILL.md             # Skill definition + YAML frontmatter
 │   │   │   ├── STATE_SCHEMA.yaml    # State shape (committed, versioned)
@@ -219,7 +220,7 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 
 Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
-- **41 Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`, `compact.py`, `intercept.py`, `score.py`, `integrity.py`, `persist.py`, `recall.py`) — run directly to manipulate state, generate reports, or trigger actions. Install `PyYAML` for any helper that reads or writes skill state.
+- **42 Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`, `compact.py`, `intercept.py`, `score.py`, `integrity.py`, `persist.py`, `recall.py`) — run directly to manipulate state, generate reports, or trigger actions. Install `PyYAML` for any helper that reads or writes skill state.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
 - Every script supports `--help` and `--format json`. Dry-run mode available on scripts that make changes.
 - See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of cron behaviour.
@@ -236,6 +237,9 @@ Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
 **Teams depending on scheduled delivery**
 > Use `cron-execution-prover` around cron workflows that write files or send notifications, so "started" and "delivered" are no longer treated as the same thing.
+
+**Anyone shipping notifications to real humans**
+> Use `message-delivery-verifier` for the last mile. It tells you whether a Telegram or Slack-style notification was only queued, actually sent, acknowledged, failed, or left stale.
 
 **Anyone moving from one agent to a fleet**
 > Run `subagent-capability-auditor` before trusting subagents in production. It catches missing spawn capability, risky delegation depth, and flat fleets that will be painful to operate.
