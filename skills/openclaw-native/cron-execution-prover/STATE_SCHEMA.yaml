@@ -1,0 +1,31 @@
+version: "1.0"
+description: Cron proof ledger, stale-run detection, and reporting history.
+fields:
+  runs:
+    type: list
+    items:
+      skill:        { type: string }
+      run_id:       { type: string }
+      expected_at:  { type: datetime }
+      started_at:   { type: datetime }
+      finished_at:  { type: datetime }
+      status:       { type: enum, values: [expected, in_progress, succeeded, failed, stale] }
+      evidence:     { type: list, items: { type: string } }
+      notes:        { type: string }
+  stale_runs:
+    type: list
+    items:
+      skill:       { type: string }
+      run_id:      { type: string }
+      expected_at: { type: datetime }
+      age_minutes: { type: integer }
+  last_report_at:
+    type: datetime
+  report_history:
+    type: list
+    description: Rolling history of report summaries (last 12)
+    items:
+      reported_at:      { type: datetime }
+      total_runs:       { type: integer }
+      stale_run_count:  { type: integer }
+      failed_run_count: { type: integer }

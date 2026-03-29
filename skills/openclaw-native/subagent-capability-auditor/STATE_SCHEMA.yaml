@@ -1,0 +1,28 @@
+version: "1.0"
+description: Subagent capability findings and rolling audit summaries.
+fields:
+  last_audit_at:
+    type: datetime
+  config_files:
+    type: list
+    items:
+      type: string
+  findings:
+    type: list
+    items:
+      severity:    { type: enum, values: [FAIL, WARN, INFO] }
+      check:       { type: string }
+      detail:      { type: string }
+      suggestion:  { type: string }
+      file_path:   { type: string }
+      detected_at: { type: datetime }
+      resolved:    { type: boolean }
+  audit_history:
+    type: list
+    description: Rolling summaries of the last 12 audits
+    items:
+      audited_at:   { type: datetime }
+      fail_count:   { type: integer }
+      warn_count:   { type: integer }
+      info_count:   { type: integer }
+      file_count:   { type: integer }

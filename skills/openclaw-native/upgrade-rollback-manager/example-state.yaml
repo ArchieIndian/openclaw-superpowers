@@ -1,0 +1,39 @@
+# Example runtime state for upgrade-rollback-manager
+last_snapshot_at: "2026-03-31T08:45:00.000000"
+latest_snapshot:
+  label: "before-1-5-upgrade"
+  snapshot_dir: "/Users/you/.openclaw/rollback-snapshots/20260331-084500-before-1-5-upgrade"
+  openclaw_version: "1.4.3"
+  created_at: "2026-03-31T08:45:00.000000"
+  files:
+    - "/Users/you/.openclaw/openclaw.json"
+    - "/Users/you/.openclaw/extensions"
+    - "/Users/you/.openclaw/workspace"
+snapshots:
+  - label: "before-1-5-upgrade"
+    snapshot_dir: "/Users/you/.openclaw/rollback-snapshots/20260331-084500-before-1-5-upgrade"
+    openclaw_version: "1.4.3"
+    created_at: "2026-03-31T08:45:00.000000"
+    files:
+      - "/Users/you/.openclaw/openclaw.json"
+      - "/Users/you/.openclaw/extensions"
+      - "/Users/you/.openclaw/workspace"
+rollback_history:
+  - generated_at: "2026-03-31T08:46:12.000000"
+    label: "before-1-5-upgrade"
+    snapshot_dir: "/Users/you/.openclaw/rollback-snapshots/20260331-084500-before-1-5-upgrade"
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 manage.py --snapshot --label before-1-5-upgrade
+#
+#   Upgrade Rollback Manager
+#   ───────────────────────────────────────────────────────
+#     Snapshot: before-1-5-upgrade
+#     Version: 1.4.3
+#     Files preserved: 3
+#
+# python3 manage.py --rollback-plan before-1-5-upgrade
+#
+#   Rollback plan for before-1-5-upgrade
+#   1. Stop the gateway
+#   2. Restore preserved files from the snapshot directory
+#   3. Restart on the previous runtime version

@@ -1,0 +1,44 @@
+# Example runtime state for session-reset-recovery
+active_task: "ship-deployment-preflight"
+pending_resume: true
+latest_checkpoint:
+  task: "ship-deployment-preflight"
+  status: "in_progress"
+  checkpoint_text: "Deployment preflight skill is implemented and validated locally."
+  next_action: "Push the branch and open the PR."
+  files_in_play:
+    - "skills/openclaw-native/deployment-preflight/SKILL.md"
+    - "skills/openclaw-native/deployment-preflight/check.py"
+    - "README.md"
+  blockers: []
+  mode: automatic
+  written_at: "2026-03-29T03:45:02.000000"
+resume_brief: "Resume `ship-deployment-preflight`: Deployment preflight skill is implemented and validated locally. Next: Push the branch and open the PR."
+checkpoint_history:
+  - task: "ship-deployment-preflight"
+    status: "in_progress"
+    checkpoint_text: "Deployment preflight skill is implemented and validated locally."
+    next_action: "Push the branch and open the PR."
+    mode: automatic
+    written_at: "2026-03-29T03:45:02.000000"
+  - task: "ship-deployment-preflight"
+    status: "in_progress"
+    checkpoint_text: "README inventory updated to include deployment-preflight."
+    next_action: "Run the test runner and preflight smoke test."
+    mode: manual
+    written_at: "2026-03-28T23:18:10.000000"
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# Cron runs at 03:45:  python3 recover.py --checkpoint --automatic
+#
+#   Session Reset Recovery
+#   ───────────────────────────────────────────────────────
+#     Task: ship-deployment-preflight
+#     Status: in_progress
+#     Checkpoint: Deployment preflight skill is implemented and validated locally.
+#     Next: Push the branch and open the PR.
+#
+# python3 recover.py --resume
+#
+#   Resume `ship-deployment-preflight`
+#   Deployment preflight skill is implemented and validated locally.
+#   Next: Push the branch and open the PR.

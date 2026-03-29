@@ -1,0 +1,62 @@
+# Example runtime state for deployment-preflight
+last_check_at: "2026-03-29T09:15:05.000000"
+deployment_root: "/srv/openclaw"
+deployment_mode: docker-compose
+environment:
+  openclaw_home: "/srv/openclaw/.openclaw"
+  workspace_dir: "/srv/openclaw/.openclaw/workspace"
+  superpowers_path: "/srv/openclaw/.openclaw/extensions/superpowers"
+  openclaw_cli_found: true
+  pyyaml_found: true
+  docker_found: true
+  docker_compose_found: true
+  files_checked: 3
+findings:
+  - severity: WARN
+    check: WORKSPACE_BOOTSTRAP_PARTIAL
+    detail: "Workspace exists but MEMORY.md is missing."
+    suggestion: "Add the missing bootstrap file before relying on persistent context."
+    file_path: "/srv/openclaw/.openclaw/workspace"
+    detected_at: "2026-03-29T09:15:05.000000"
+    resolved: false
+  - severity: WARN
+    check: PUBLIC_GATEWAY_PORT
+    detail: "compose.yaml publishes 18789 without loopback binding."
+    suggestion: "Bind the gateway to 127.0.0.1 or put it behind an authenticated reverse proxy."
+    file_path: "/srv/openclaw/compose.yaml"
+    detected_at: "2026-03-29T09:15:05.000000"
+    resolved: false
+  - severity: INFO
+    check: SUPERPOWERS_SYMLINK
+    detail: "superpowers is installed as a symlink to the skills directory."
+    suggestion: "No action required."
+    file_path: "/srv/openclaw/.openclaw/extensions/superpowers"
+    detected_at: "2026-03-29T09:15:05.000000"
+    resolved: false
+check_history:
+  - checked_at: "2026-03-29T09:15:05.000000"
+    deployment_mode: docker-compose
+    fail_count: 0
+    warn_count: 2
+    info_count: 1
+    files_checked: 3
+  - checked_at: "2026-03-28T18:00:00.000000"
+    deployment_mode: docker-compose
+    fail_count: 1
+    warn_count: 1
+    info_count: 0
+    files_checked: 3
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 check.py --check --path /srv/openclaw
+#
+#   Deployment Preflight
+#   ───────────────────────────────────────────────────────
+#     Mode: docker-compose
+#     Files checked: 3
+#     0 FAIL | 2 WARN | 1 INFO
+#
+#     WARN  WORKSPACE_BOOTSTRAP_PARTIAL
+#       Workspace exists but MEMORY.md is missing.
+#
+#     WARN  PUBLIC_GATEWAY_PORT
+#       compose.yaml publishes 18789 without loopback binding.

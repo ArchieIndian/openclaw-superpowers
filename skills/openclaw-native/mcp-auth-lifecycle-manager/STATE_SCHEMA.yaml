@@ -1,0 +1,43 @@
+version: "1.0"
+description: MCP auth inventory, expiry tracking, refresh readiness, and refresh history.
+fields:
+  last_scan_at:
+    type: datetime
+  last_config_path:
+    type: string
+  last_registry_path:
+    type: string
+  servers:
+    type: list
+    items:
+      name:                   { type: string }
+      provider:               { type: string }
+      auth_type:              { type: string }
+      status:                 { type: enum, values: [healthy, degraded, critical, unknown] }
+      env_vars:
+        type: list
+        items:                { type: string }
+      missing_env_vars:
+        type: list
+        items:                { type: string }
+      expires_at:             { type: datetime }
+      last_refresh_at:        { type: datetime }
+      refresh_interval_hours: { type: integer }
+      interactive_refresh:    { type: boolean }
+      refresh_command:        { type: string }
+      notes:                  { type: string }
+      findings:
+        type: list
+        items:
+          check:              { type: string }
+          severity:           { type: string }
+          detail:             { type: string }
+  refresh_history:
+    type: list
+    description: Rolling log of manual or automated refresh outcomes
+    items:
+      recorded_at:            { type: datetime }
+      server:                 { type: string }
+      result:                 { type: enum, values: [success, failed] }
+      note:                   { type: string }
+      expires_at:             { type: datetime }

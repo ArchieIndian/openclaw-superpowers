@@ -1,0 +1,31 @@
+version: "1.0"
+description: Recovery checkpoints and resume briefs for routine session resets.
+fields:
+  active_task:
+    type: string
+  pending_resume:
+    type: boolean
+    default: false
+  latest_checkpoint:
+    type: object
+    items:
+      task:            { type: string }
+      status:          { type: string }
+      checkpoint_text: { type: string }
+      next_action:     { type: string }
+      files_in_play:   { type: list, items: { type: string } }
+      blockers:        { type: list, items: { type: string } }
+      mode:            { type: enum, values: [manual, automatic] }
+      written_at:      { type: datetime }
+  resume_brief:
+    type: string
+  checkpoint_history:
+    type: list
+    description: Rolling log of the last 12 checkpoints
+    items:
+      task:            { type: string }
+      status:          { type: string }
+      checkpoint_text: { type: string }
+      next_action:     { type: string }
+      mode:            { type: string }
+      written_at:      { type: datetime }

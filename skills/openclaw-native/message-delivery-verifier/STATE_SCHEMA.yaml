@@ -1,0 +1,34 @@
+version: "1.0"
+description: Delivery ledger, stale message tracking, and report history.
+fields:
+  deliveries:
+    type: list
+    items:
+      channel:       { type: string }
+      delivery_id:   { type: string }
+      recipient:     { type: string }
+      body:          { type: string }
+      queued_at:     { type: datetime }
+      sent_at:       { type: datetime }
+      acknowledged_at: { type: datetime }
+      status:        { type: enum, values: [queued, sent, acknowledged, failed, stale] }
+      receipt:       { type: string }
+      failure_reason:{ type: string }
+      retry_count:   { type: integer }
+  stale_deliveries:
+    type: list
+    items:
+      delivery_id:   { type: string }
+      channel:       { type: string }
+      recipient:     { type: string }
+      age_minutes:   { type: integer }
+  last_report_at:
+    type: datetime
+  report_history:
+    type: list
+    description: Rolling history of the last 12 delivery reports
+    items:
+      reported_at:        { type: datetime }
+      total_deliveries:   { type: integer }
+      stale_count:        { type: integer }
+      failed_count:       { type: integer }
