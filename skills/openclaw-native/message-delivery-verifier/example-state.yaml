@@ -1,0 +1,42 @@
+# Example runtime state for message-delivery-verifier
+deliveries:
+  - channel: telegram
+    delivery_id: "msg-001"
+    recipient: "ops-chat"
+    body: "Morning briefing ready"
+    queued_at: "2026-04-01T07:00:00"
+    sent_at: "2026-04-01T07:00:03"
+    acknowledged_at: "2026-04-01T07:00:07"
+    status: acknowledged
+    receipt: "telegram:8812"
+    failure_reason: ""
+    retry_count: 0
+  - channel: slack
+    delivery_id: "msg-002"
+    recipient: "#alerts"
+    body: "Nightly sync completed"
+    queued_at: "2026-04-01T08:00:00"
+    sent_at: "2026-04-01T08:00:05"
+    acknowledged_at: ""
+    status: stale
+    receipt: "slack:ts-191.88"
+    failure_reason: ""
+    retry_count: 1
+stale_deliveries:
+  - delivery_id: "msg-002"
+    channel: slack
+    recipient: "#alerts"
+    age_minutes: 92
+last_report_at: "2026-04-01T09:32:00"
+report_history:
+  - reported_at: "2026-04-01T09:32:00"
+    total_deliveries: 2
+    stale_count: 1
+    failed_count: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 verify.py --stale
+#
+#   Message Delivery Verifier
+#   ───────────────────────────────────────────────────────
+#     2 deliveries | 1 stale | 0 failed
+#     STALE slack msg-002 -> #alerts
