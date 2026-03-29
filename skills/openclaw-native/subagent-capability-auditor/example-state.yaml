@@ -1,0 +1,42 @@
+# Example runtime state for subagent-capability-auditor
+last_audit_at: "2026-03-30T14:20:05.000000"
+config_files:
+  - "/Users/you/.openclaw/config/agents.yaml"
+  - "/Users/you/.openclaw/config/runtime.json"
+findings:
+  - severity: WARN
+    check: SPAWN_DEPTH_HIGH
+    detail: "maxSpawnDepth is set to 6; runaway delegation becomes harder to reason about."
+    suggestion: "Lower maxSpawnDepth to 2 or 3 unless you have a strong reason to exceed it."
+    file_path: "/Users/you/.openclaw/config/runtime.json"
+    detected_at: "2026-03-30T14:20:05.000000"
+    resolved: false
+  - severity: WARN
+    check: LARGE_AGENT_FLEET
+    detail: "Detected 12 configured agents in a flat fleet."
+    suggestion: "Consolidate overlapping roles or create stronger role boundaries before scaling further."
+    file_path: "/Users/you/.openclaw/config/agents.yaml"
+    detected_at: "2026-03-30T14:20:05.000000"
+    resolved: false
+  - severity: INFO
+    check: SPAWN_TOOL_PRESENT
+    detail: "Spawn tooling appears to be exposed in the current configuration."
+    suggestion: "No action required."
+    file_path: "/Users/you/.openclaw/config/agents.yaml"
+    detected_at: "2026-03-30T14:20:05.000000"
+    resolved: false
+audit_history:
+  - audited_at: "2026-03-30T14:20:05.000000"
+    fail_count: 0
+    warn_count: 2
+    info_count: 1
+    file_count: 2
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 audit.py --audit
+#
+#   Subagent Capability Auditor
+#   ───────────────────────────────────────────────────────
+#     2 config files | 0 FAIL | 2 WARN | 1 INFO
+#
+#     WARN  SPAWN_DEPTH_HIGH
+#       maxSpawnDepth is set to 6; runaway delegation becomes harder to reason about.
