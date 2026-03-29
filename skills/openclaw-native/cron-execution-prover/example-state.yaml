@@ -1,0 +1,41 @@
+# Example runtime state for cron-execution-prover
+runs:
+  - skill: "morning-briefing"
+    run_id: "mb-20260330-0700"
+    expected_at: "2026-03-30T07:00:00"
+    started_at: "2026-03-30T07:00:02"
+    finished_at: "2026-03-30T07:00:18"
+    status: succeeded
+    evidence:
+      - "telegram:msg-8812"
+      - "state:morning-briefing:last_briefing_date=2026-03-30"
+    notes: "Delivered successfully."
+  - skill: "community-skill-radar"
+    run_id: "csr-20260330-0900"
+    expected_at: "2026-03-30T09:00:00"
+    started_at: "2026-03-30T09:00:10"
+    finished_at: ""
+    status: stale
+    evidence:
+      - "reddit-fetch-started"
+    notes: "Started, but PROPOSALS.md was never written."
+stale_runs:
+  - skill: "community-skill-radar"
+    run_id: "csr-20260330-0900"
+    expected_at: "2026-03-30T09:00:00"
+    age_minutes: 94
+last_report_at: "2026-03-30T10:34:00"
+report_history:
+  - reported_at: "2026-03-30T10:34:00"
+    total_runs: 2
+    stale_run_count: 1
+    failed_run_count: 0
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 prove.py --stale
+#
+#   Cron Execution Prover
+#   ───────────────────────────────────────────────────────
+#     2 tracked runs | 1 stale | 0 failed
+#
+#     STALE community-skill-radar (csr-20260330-0900)
+#       Started, but PROPOSALS.md was never written.
