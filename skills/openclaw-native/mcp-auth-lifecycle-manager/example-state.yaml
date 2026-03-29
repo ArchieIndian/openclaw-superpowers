@@ -1,0 +1,69 @@
+# Example runtime state for mcp-auth-lifecycle-manager
+last_scan_at: "2026-04-02T12:00:00"
+last_config_path: "/Users/you/.openclaw/config/mcp.yaml"
+last_registry_path: "/Users/you/.openclaw/config/mcp-auth.yaml"
+servers:
+  - name: github
+    provider: github
+    auth_type: oauth
+    status: healthy
+    env_vars: ["GITHUB_TOKEN"]
+    missing_env_vars: []
+    expires_at: "2026-04-20T12:00:00"
+    last_refresh_at: "2026-04-02T06:30:00"
+    refresh_interval_hours: 12
+    interactive_refresh: false
+    refresh_command: "gh auth refresh -h github.com"
+    notes: "SSO rotation policy"
+    findings: []
+  - name: linear
+    provider: linear
+    auth_type: bearer
+    status: critical
+    env_vars: ["LINEAR_API_TOKEN"]
+    missing_env_vars: ["LINEAR_API_TOKEN"]
+    expires_at: ""
+    last_refresh_at: ""
+    refresh_interval_hours: 24
+    interactive_refresh: true
+    refresh_command: ""
+    notes: "Browser login required until service account is configured"
+    findings:
+      - check: TOKEN_MISSING
+        severity: CRITICAL
+        detail: "Missing environment variable: LINEAR_API_TOKEN"
+      - check: REFRESH_UNDEFINED
+        severity: HIGH
+        detail: "No refresh command or documented recovery path"
+      - check: INTERACTIVE_REFRESH
+        severity: MEDIUM
+        detail: "Refresh still requires a manual browser login"
+refresh_history:
+  - recorded_at: "2026-04-02T06:30:00"
+    server: github
+    result: success
+    note: "gh auth refresh -h github.com"
+    expires_at: "2026-04-20T12:00:00"
+  - recorded_at: "2026-04-01T12:10:00"
+    server: linear
+    result: failed
+    note: "Interactive login not available on headless host"
+    expires_at: ""
+# ── Walkthrough ──────────────────────────────────────────────────────────────
+# python3 manage.py --scan
+#
+#   MCP Auth Lifecycle Manager
+#   ───────────────────────────────────────────────────────
+#     2 servers | 1 healthy | 0 degraded | 1 critical
+#
+#     HEALTHY   github   oauth
+#     CRITICAL  linear   bearer
+#       [CRITICAL] TOKEN_MISSING: Missing environment variable: LINEAR_API_TOKEN
+#       [HIGH] REFRESH_UNDEFINED: No refresh command or documented recovery path
+#
+# python3 manage.py --plan github
+#
+#   Refresh plan for github
+#   1. Confirm env vars: GITHUB_TOKEN
+#   2. Run: gh auth refresh -h github.com
+#   3. Re-run mcp-health-checker and record the result with manage.py --record-refresh
