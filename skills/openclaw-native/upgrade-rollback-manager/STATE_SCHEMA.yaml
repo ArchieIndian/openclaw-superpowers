@@ -1,0 +1,28 @@
+version: "1.0"
+description: Upgrade snapshots, preserved config metadata, and rollback planning history.
+fields:
+  last_snapshot_at:
+    type: datetime
+  latest_snapshot:
+    type: object
+    items:
+      label:            { type: string }
+      snapshot_dir:     { type: string }
+      openclaw_version: { type: string }
+      created_at:       { type: datetime }
+      files:            { type: list, items: { type: string } }
+  snapshots:
+    type: list
+    items:
+      label:            { type: string }
+      snapshot_dir:     { type: string }
+      openclaw_version: { type: string }
+      created_at:       { type: datetime }
+      files:            { type: list, items: { type: string } }
+  rollback_history:
+    type: list
+    description: Rolling history of generated rollback plans (last 12)
+    items:
+      generated_at:     { type: datetime }
+      label:            { type: string }
+      snapshot_dir:     { type: string }
