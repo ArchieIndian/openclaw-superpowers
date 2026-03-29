@@ -23,17 +23,18 @@ import re
 import shutil
 import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
 
-try:
-    import yaml
-    HAS_YAML = True
-except ImportError:
-    HAS_YAML = False
+REPO_ROOT = Path(__file__).resolve().parents[3]
+SCRIPTS_DIR = REPO_ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
-OPENCLAW_DIR = Path(os.environ.get("OPENCLAW_HOME", Path.home() / ".openclaw"))
-STATE_FILE = OPENCLAW_DIR / "skill-state" / "deployment-preflight" / "state.yaml"
+from state_helpers import HAS_YAML, load_state as load_state_file
+from state_helpers import now_iso, openclaw_dir, save_state as save_state_file, skill_state_file
+
+OPENCLAW_DIR = openclaw_dir()
+STATE_FILE = skill_state_file("deployment-preflight")
 WORKSPACE_DIR = Path(os.environ.get("OPENCLAW_WORKSPACE", OPENCLAW_DIR / "workspace"))
 SUPERPOWERS_PATH = OPENCLAW_DIR / "extensions" / "superpowers"
 MAX_HISTORY = 12
@@ -61,24 +62,11 @@ def default_state() -> dict:
 
 
 def load_state() -> dict:
-    if not STATE_FILE.exists():
-        return default_state()
-    try:
-        text = STATE_FILE.read_text()
-        if HAS_YAML:
-            return yaml.safe_load(text) or default_state()
-        return json.loads(text)
-    except Exception:
-        return default_state()
+    return load_state_file(STATE_FILE, default_state)
 
 
 def save_state(state: dict) -> None:
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if HAS_YAML:
-        with open(STATE_FILE, "w") as handle:
-            yaml.dump(state, handle, default_flow_style=False, allow_unicode=True, sort_keys=False)
-    else:
-        STATE_FILE.write_text(json.dumps(state, indent=2))
+    save_state_file(STATE_FILE, state)
 
 
 def finding(severity: str, check: str, detail: str, suggestion: str, file_path: Path | str = "") -> dict:
@@ -88,7 +76,7 @@ def finding(severity: str, check: str, detail: str, suggestion: str, file_path: 
         "detail": detail,
         "suggestion": suggestion,
         "file_path": str(file_path),
-        "detected_at": datetime.now().isoformat(),
+        "detected_at": now_iso(),
         "resolved": False,
     }
 
@@ -401,7 +389,7 @@ def run_check(root: Path) -> dict:
 
     state = load_state()
     history = state.get("check_history") or []
-    now = datetime.now().isoformat()
+    now = now_iso()
     history.insert(
         0,
         {

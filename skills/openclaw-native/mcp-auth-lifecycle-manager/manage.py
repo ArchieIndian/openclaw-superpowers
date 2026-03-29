@@ -11,17 +11,21 @@ import argparse
 import json
 import os
 import re
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-try:
-    import yaml
-    HAS_YAML = True
-except ImportError:
-    HAS_YAML = False
+REPO_ROOT = Path(__file__).resolve().parents[3]
+SCRIPTS_DIR = REPO_ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
-OPENCLAW_DIR = Path(os.environ.get("OPENCLAW_HOME", Path.home() / ".openclaw"))
-STATE_FILE = OPENCLAW_DIR / "skill-state" / "mcp-auth-lifecycle-manager" / "state.yaml"
+from state_helpers import load_state as load_state_file
+from state_helpers import load_structured as load_structured_file, now_iso, openclaw_dir
+from state_helpers import save_state as save_state_file, skill_state_file
+
+OPENCLAW_DIR = openclaw_dir()
+STATE_FILE = skill_state_file("mcp-auth-lifecycle-manager")
 MAX_HISTORY = 20
 
 MCP_CONFIG_PATHS = [
@@ -57,37 +61,15 @@ def default_state() -> dict:
 
 
 def load_structured(path: Path) -> dict:
-    text = path.read_text()
-    if path.suffix == ".json":
-        return json.loads(text)
-    if HAS_YAML:
-        return yaml.safe_load(text) or {}
-    return {}
+    return load_structured_file(path, dict)
 
 
 def load_state() -> dict:
-    if not STATE_FILE.exists():
-        return default_state()
-    try:
-        text = STATE_FILE.read_text()
-        if HAS_YAML:
-            return yaml.safe_load(text) or default_state()
-        return json.loads(text)
-    except Exception:
-        return default_state()
+    return load_state_file(STATE_FILE, default_state)
 
 
 def save_state(state: dict) -> None:
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if HAS_YAML:
-        with open(STATE_FILE, "w") as handle:
-            yaml.dump(state, handle, default_flow_style=False, allow_unicode=True, sort_keys=False)
-    else:
-        STATE_FILE.write_text(json.dumps(state, indent=2))
-
-
-def now_iso() -> str:
-    return datetime.now().isoformat(timespec="seconds")
+    save_state_file(STATE_FILE, state)
 
 
 def find_config(paths: list[Path]) -> tuple[Path | None, dict]:

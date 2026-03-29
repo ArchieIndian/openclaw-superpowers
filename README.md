@@ -61,6 +61,22 @@ openclaw gateway restart
 
 Install `PyYAML` before using the stateful Python helpers: `python3 -m pip install PyYAML`.
 
+For operator workflows and rollout order, see [docs/OPERATIONS.md](docs/OPERATIONS.md).
+
+---
+
+## Start Here
+
+If you are adopting the repo for real unattended usage, start in this order:
+
+1. Run `deployment-preflight` before the first install or after Docker/compose changes.
+2. Install the repo and run `runtime-verification-dashboard` once the runtime is live.
+3. Wrap scheduled work with `cron-execution-prover` and `message-delivery-verifier`.
+4. Add `session-reset-recovery` and `upgrade-rollback-manager` before relying on overnight or upgrade-heavy automation.
+5. If you use MCP servers, pair `mcp-health-checker` with `mcp-auth-lifecycle-manager`.
+
+This gives you deployment safety, runtime visibility, proof of execution, proof of delivery, reset survival, rollback coverage, and MCP auth coverage without enabling every skill at once.
+
 ---
 
 ## Skills included
@@ -258,6 +274,9 @@ Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
 **Self-hosted or Docker deployment**
 > Run `deployment-preflight` before the first rollout or after compose changes to catch missing mounts, missing bootstrap files, and public gateway exposure. Follow it with `runtime-verification-dashboard` once the runtime is live.
+
+**Operators building a reliability stack**
+> Use the playbooks in [docs/OPERATIONS.md](docs/OPERATIONS.md) to layer deployment safety, cron proofing, delivery verification, reset recovery, upgrade rollback, and MCP auth checks in a sane order.
 
 **Open-source maintainer**
 > `community-skill-radar` scans Reddit for pain points automatically. `skill-vetting` catches malicious community contributions before they're installed. `installed-skill-auditor` detects post-install tampering.

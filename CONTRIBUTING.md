@@ -6,7 +6,7 @@ We'd love your skills! Here's how to contribute.
 
 1. **Propose your idea** — [Open a Skill Proposal issue](../../issues/new?template=skill-proposal.yml) to get feedback
 2. **Create the skill** — Use the `create-skill` superpower or copy the [template](skills/core/create-skill/TEMPLATE.md)
-3. **Validate locally** — Run `./scripts/validate-skills.sh` to catch issues
+3. **Validate locally** — Run `./scripts/validate-skills.sh` and `bash ./tests/test-runner.sh`
 4. **Submit a PR** — CI validates automatically on any PR that touches `skills/`
 
 ## Where to Put Your Skill
@@ -46,7 +46,15 @@ Run the validation script before submitting:
 ./scripts/validate-skills.sh
 ```
 
-It checks: frontmatter format, naming conventions, file structure, line count, stateful skill coherence (`STATE_SCHEMA.yaml` present when `stateful: true`), and cron expression format.
+It checks: frontmatter format, naming conventions, file structure, line count, stateful skill coherence (`STATE_SCHEMA.yaml` present when `stateful: true`), cron expression format, and README inventory metrics.
+
+Run the repository smoke tests too:
+
+```bash
+bash ./tests/test-runner.sh
+```
+
+If you are adding or updating a stateful helper script, prefer reusing the shared helpers in `scripts/state_helpers.py` instead of open-coding the same YAML/JSON state loader again.
 
 ## Pull Requests
 

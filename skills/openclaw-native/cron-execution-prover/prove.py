@@ -10,18 +10,19 @@ and evidence are explicit.
 
 import argparse
 import json
-import os
+import sys
 from datetime import datetime
 from pathlib import Path
 
-try:
-    import yaml
-    HAS_YAML = True
-except ImportError:
-    HAS_YAML = False
+REPO_ROOT = Path(__file__).resolve().parents[3]
+SCRIPTS_DIR = REPO_ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
-OPENCLAW_DIR = Path(os.environ.get("OPENCLAW_HOME", Path.home() / ".openclaw"))
-STATE_FILE = OPENCLAW_DIR / "skill-state" / "cron-execution-prover" / "state.yaml"
+from state_helpers import load_state as load_state_file
+from state_helpers import now_iso, save_state as save_state_file, skill_state_file
+
+STATE_FILE = skill_state_file("cron-execution-prover")
 MAX_RUNS = 100
 MAX_HISTORY = 12
 STALE_AFTER_MINUTES = 60
@@ -37,28 +38,11 @@ def default_state() -> dict:
 
 
 def load_state() -> dict:
-    if not STATE_FILE.exists():
-        return default_state()
-    try:
-        text = STATE_FILE.read_text()
-        if HAS_YAML:
-            return yaml.safe_load(text) or default_state()
-        return json.loads(text)
-    except Exception:
-        return default_state()
+    return load_state_file(STATE_FILE, default_state)
 
 
 def save_state(state: dict) -> None:
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    if HAS_YAML:
-        with open(STATE_FILE, "w") as handle:
-            yaml.dump(state, handle, default_flow_style=False, allow_unicode=True, sort_keys=False)
-    else:
-        STATE_FILE.write_text(json.dumps(state, indent=2))
-
-
-def now_iso() -> str:
-    return datetime.now().isoformat(timespec="seconds")
+    save_state_file(STATE_FILE, state)
 
 
 def find_run(state: dict, skill: str, run_id: str) -> dict | None:
