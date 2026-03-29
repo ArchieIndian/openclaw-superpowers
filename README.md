@@ -226,6 +226,9 @@ Skills marked with a script ship a small executable alongside their `SKILL.md`:
 **Team running multiple OpenClaw agents**
 > Use `multi-agent-coordinator` for fleet health checks, `skill-loadout-manager` to keep system prompts lean per agent role, and `heartbeat-governor` to prevent runaway cron costs.
 
+**Self-hosted or Docker deployment**
+> Run `deployment-preflight` before the first rollout or after compose changes to catch missing mounts, missing bootstrap files, and public gateway exposure. Follow it with `runtime-verification-dashboard` once the runtime is live.
+
 **Open-source maintainer**
 > `community-skill-radar` scans Reddit for pain points automatically. `skill-vetting` catches malicious community contributions before they're installed. `installed-skill-auditor` detects post-install tampering.
 
