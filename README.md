@@ -1,11 +1,11 @@
 # openclaw-superpowers
 
-**52 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
+**56 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
 
-[![Skills](https://img.shields.io/badge/skills-52-blue)](#skills-included)
+[![Skills](https://img.shields.io/badge/skills-56-blue)](#skills-included)
 [![Security](https://img.shields.io/badge/security_skills-6-green)](#security--guardrails)
-[![Cron](https://img.shields.io/badge/cron_scheduled-16-orange)](#openclaw-native-36-skills)
-[![Scripts](https://img.shields.io/badge/companion_scripts-23-purple)](#companion-scripts)
+[![Cron](https://img.shields.io/badge/cron_scheduled-16-orange)](#openclaw-native-38-skills)
+[![Scripts](https://img.shields.io/badge/companion_scripts-25-purple)](#companion-scripts)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 A plug-and-play skill library for [OpenClaw](https://github.com/openclaw/openclaw) — the open-source AI agent runtime. Gives your agent structured thinking, security guardrails, persistent memory, cron scheduling, self-recovery, and the ability to write its own new skills during conversation.
@@ -20,7 +20,7 @@ Built for developers who want their AI agent to run autonomously 24/7, not just 
 
 Most AI agent frameworks give you a chatbot that forgets everything between sessions. OpenClaw is different — it runs persistently, handles multi-hour tasks, and has native cron scheduling. But out of the box, it doesn't know *how* to use those capabilities well.
 
-**openclaw-superpowers bridges that gap.** Install 52 skills in one command, and your agent immediately knows how to:
+**openclaw-superpowers bridges that gap.** Install 56 skills in one command, and your agent immediately knows how to:
 
 - **Think before it acts** — brainstorming, planning, and systematic debugging skills prevent the "dive in and break things" failure mode
 - **Protect itself** — 6 security skills detect prompt injection, block dangerous actions, audit installed code, and scan for leaked credentials
@@ -51,13 +51,13 @@ cd ~/.openclaw/extensions/superpowers && ./install.sh
 openclaw gateway restart
 ```
 
-`install.sh` symlinks all 52 skills, creates state directories for stateful skills, and registers cron jobs — everything in one step. That's it. Your agent now has superpowers.
+`install.sh` symlinks all 56 skills, creates state directories for stateful skills, and registers cron jobs — everything in one step. That's it. Your agent now has superpowers.
 
 ---
 
 ## Skills included
 
-### Core (15 skills)
+### Core (17 skills)
 
 Methodology skills that work in any AI agent runtime. Adapted from [obra/superpowers](https://github.com/obra/superpowers) plus new additions for skill quality assurance.
 
@@ -78,8 +78,10 @@ Methodology skills that work in any AI agent runtime. Adapted from [obra/superpo
 | `skill-trigger-tester` | Scores a skill's description against sample prompts to predict trigger reliability | `test.py` |
 | `skill-conflict-detector` | Detects name shadowing and description-overlap conflicts between installed skills | `detect.py` |
 | `skill-portability-checker` | Validates OS/binary dependencies in companion scripts; catches non-portable calls | `check.py` |
+| `pull-request-feedback-loop` | Handles PR review comments as grouped, verified fix loops | — |
+| `skill-effectiveness-auditor` | Reviews whether a skill will trigger reliably and guide useful behavior | — |
 
-### OpenClaw-Native (36 skills)
+### OpenClaw-Native (38 skills)
 
 Skills that require OpenClaw's persistent runtime — cron scheduling, session state, or long-running execution. These are the skills that make a 24/7 autonomous agent actually work reliably.
 
@@ -94,6 +96,7 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `morning-briefing` | Daily briefing: priorities, active tasks, pending handoffs | weekdays 7am | `run.py` |
 | `secrets-hygiene` | Audits installed skills for stale credentials and orphaned secrets | Mondays 9am | `audit.py` |
 | `workflow-orchestration` | Chains skills into resumable named workflows with on-failure conditions | — | `run.py` |
+| `quality-gate-orchestrator` | Tracks required validation gates and reports completion readiness | — | `gate.py` |
 | `context-budget-guard` | Estimates context usage and triggers compaction before overflow | — | `check.py` |
 | `prompt-injection-guard` | Detects injection attempts in external content before the agent acts | — | `guard.py` |
 | `spend-circuit-breaker` | Tracks API spend against a monthly budget; pauses crons at 100% | every 4h | `check.py` |
@@ -111,6 +114,7 @@ Skills that require OpenClaw's persistent runtime — cron scheduling, session s
 | `community-skill-radar` | Scans Reddit for OpenClaw pain points and feature requests; writes prioritized PROPOSALS.md | every 3 days | `radar.py` |
 | `memory-graph-builder` | Parses MEMORY.md into a knowledge graph; detects duplicates, contradictions, stale entries | daily 10pm | `graph.py` |
 | `config-encryption-auditor` | Scans config directories for plaintext API keys, tokens, and world-readable permissions | Sundays 9am | `audit.py` |
+| `openclaw-config-advisor` | Diagnoses provider, fallback, channel, MCP, and gateway config issues | — | `advise.py` |
 | `tool-description-optimizer` | Scores skill descriptions for trigger quality — clarity, specificity, keyword density — and suggests rewrites | — | `optimize.py` |
 | `mcp-health-checker` | Monitors MCP server connections for health, latency, and availability; detects stale connections | every 6h | `check.py` |
 | `memory-dag-compactor` | Builds hierarchical summary DAGs from MEMORY.md with depth-aware prompts (d0 leaf → d3+ durable) | daily 11pm | `compact.py` |
@@ -151,12 +155,12 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 
 | Feature | openclaw-superpowers | obra/superpowers | Custom prompts |
 |---|---|---|---|
-| Skills included | **52** | 8 | 0 |
+| Skills included | **56** | 8 | 0 |
 | Self-modifying (agent writes new skills) | Yes | No | No |
 | Cron scheduling | **16 scheduled skills** | No | No |
 | Persistent state across sessions | **YAML state schemas** | No | No |
 | Security guardrails | **6 defense-in-depth skills** | No | No |
-| Companion scripts with CLI | **23 scripts** | No | No |
+| Companion scripts with CLI | **25 scripts** | No | No |
 | Memory graph / knowledge graph | Yes | No | No |
 | SQLite session persistence + FTS5 search | Yes | No | No |
 | Sub-agent recall with token-budgeted grants | Yes | No | No |
@@ -173,14 +177,14 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 ```
 ~/.openclaw/extensions/superpowers/
 ├── skills/
-│   ├── core/                    # 15 methodology skills (any runtime)
+│   ├── core/                    # 17 methodology skills (any runtime)
 │   │   ├── brainstorming/
 │   │   │   └── SKILL.md
 │   │   ├── create-skill/
 │   │   │   ├── SKILL.md
 │   │   │   └── TEMPLATE.md
 │   │   └── ...
-│   ├── openclaw-native/         # 36 persistent-runtime skills
+│   ├── openclaw-native/         # 38 persistent-runtime skills
 │   │   ├── memory-graph-builder/
 │   │   │   ├── SKILL.md             # Skill definition + YAML frontmatter
 │   │   │   ├── STATE_SCHEMA.yaml    # State shape (committed, versioned)
@@ -203,7 +207,7 @@ Six skills form a defense-in-depth security layer for autonomous agents:
 
 Skills marked with a script ship a small executable alongside their `SKILL.md`:
 
-- **23 Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`, `compact.py`, `intercept.py`, `score.py`, `integrity.py`, `persist.py`, `recall.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies; `pyyaml` is optional but recommended.
+- **25 Python scripts** (`run.py`, `audit.py`, `check.py`, `guard.py`, `bridge.py`, `onboard.py`, `sync.py`, `doctor.py`, `loadout.py`, `governor.py`, `detect.py`, `test.py`, `radar.py`, `graph.py`, `optimize.py`, `compact.py`, `intercept.py`, `score.py`, `integrity.py`, `persist.py`, `recall.py`, `advise.py`, `gate.py`) — run directly to manipulate state, generate reports, or trigger actions. No extra dependencies; `pyyaml` is optional but recommended.
 - **`vet.sh`** — Pure bash scanner; runs on any system with grep.
 - Every script supports `--help` and `--format json`. Dry-run mode available on scripts that make changes.
 - See the `example-state.yaml` in each skill directory for sample state and a commented walkthrough of cron behaviour.

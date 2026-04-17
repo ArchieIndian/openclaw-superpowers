@@ -1,0 +1,17 @@
+version: "1.0"
+fields:
+  last_scan_at:
+    type: string
+    description: ISO timestamp of the last config scan.
+  config_dir:
+    type: string
+    description: Directory scanned for OpenClaw config files.
+  findings:
+    type: list
+    description: Current findings with severity, area, file, and message.
+  affected_areas:
+    type: list
+    description: Config areas touched by current findings.
+  scan_history:
+    type: list
+    description: Recent scan summaries.

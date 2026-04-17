@@ -1,0 +1,14 @@
+version: "1.0"
+fields:
+  gates:
+    type: list
+    description: Known gates with name, command, required flag, last status, note, and timestamp.
+  ready:
+    type: boolean
+    description: Whether all required gates have passed or been waived.
+  last_ready_at:
+    type: string
+    description: ISO timestamp of the last readiness check.
+  gate_history:
+    type: list
+    description: Recent add, record, and readiness events.

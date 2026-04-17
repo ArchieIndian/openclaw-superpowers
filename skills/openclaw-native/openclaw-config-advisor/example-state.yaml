@@ -1,0 +1,14 @@
+last_scan_at: "2026-04-16T09:00:00"
+config_dir: "/Users/example/.openclaw"
+findings:
+  - severity: WARN
+    area: fallback
+    file: config.yaml
+    message: "No fallback model hint found."
+affected_areas:
+  - fallback
+scan_history:
+  - scanned_at: "2026-04-16T09:00:00"
+    config_dir: "/Users/example/.openclaw"
+    finding_count: 1
+    warn_count: 1

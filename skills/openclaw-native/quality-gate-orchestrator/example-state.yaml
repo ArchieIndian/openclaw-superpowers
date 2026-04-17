@@ -1,0 +1,17 @@
+gates:
+  - name: lint
+    command: "npm run lint"
+    required: true
+    last_status: pass
+    note: "Passed after style fix."
+    updated_at: "2026-04-16T09:30:00"
+ready: true
+last_ready_at: "2026-04-16T09:31:00"
+gate_history:
+  - event: add
+    name: lint
+    at: "2026-04-16T09:20:00"
+  - event: record
+    name: lint
+    status: pass
+    at: "2026-04-16T09:30:00"
