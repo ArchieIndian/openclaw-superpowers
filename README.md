@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/archieindian-openclaw-superpowers-badge.png)](https://mseep.ai/app/archieindian-openclaw-superpowers)
+
 # openclaw-superpowers
 
 **56 ready-to-use skills that make your AI agent autonomous, self-healing, and self-improving.**
