@@ -1,0 +1,9 @@
+{
+  "id": "superpowers",
+  "name": "Superpowers",
+  "description": "Plug-and-play skill library for OpenClaw — structured thinking, security guardrails, persistent memory, cron scheduling, self-recovery, and skill authoring.",
+  "version": "0.1.0",
+  "activation": {
+    "onStartup": false
+  }
+}
